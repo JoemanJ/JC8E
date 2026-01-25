@@ -6,6 +6,16 @@ Quero criar um emulador de NES como meu TCC em Engenharia de Computação, e um 
 
 O nome JC8E vem de "**J**oe's **C**HIP-**8** **E**mulator*" (ou "Emulador de CHIP-8 do Joe"). Joe é meu apelido, então faz sentido. Além disso, eu acho que "jota-cê-oito-ê" é um nome legal de falar (em inglês também) e parece realmente um nome de emulador. E também o "C8E" parece o Zoidberg de Futurama e eu acho isso engraçado.
 
+## Requisitos de Build
+Este projeto foi desenvolvido e testado no seguinte ambiente:
+- C++ 20
+- CMake 3.28.3
+- SFML 2.6.1 **(!)**
+
+Versões mais antigas podem ser compatíveis, mas não foram testadas. Versões mais recentes devem funcionar desde que sejam retrocompatíveis, como é o caso do padrão C++ e do CMake.
+
+**(!) Atenção: Este projeto não é compatível com versões 3.x da biblioteca SFML** devido a mudanças no código da biblioteca entre as versões 2.x e 3.x. Tenha certeza de usar [uma versão compatível da biblioteca](https://www.sfml-dev.org/download/sfml/2.6.1/) se quiser compilar o código.
+
 ## English
 This project is my humble attempt at creating a CHIP-8 emulator in C++ following [Tobias Langhoff's guide](https://tobiasvl.github.io/blog/write-a-chip-8-emulator/).
 
