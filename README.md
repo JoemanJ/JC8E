@@ -8,7 +8,7 @@ O nome JC8E vem de "**J**oe's **C**HIP-**8** **E**mulator*" (ou "Emulador de CHI
 
 ## Requisitos de Build
 Este projeto foi desenvolvido e testado no seguinte ambiente:
-- C++ 20
+- C++ 17
 - CMake 3.28.3
 - SFML 2.6.1 **(!)**
 
