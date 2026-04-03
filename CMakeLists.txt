@@ -20,26 +20,39 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-add_executable(cpu_tests
-    tests/test_cpu.cpp
-)
+###
+# add_executable(cpu_tests
+#     tests/test_cpu.cpp
+# )
 
-target_link_libraries(cpu_tests
-    PRIVATE
-        Chip8Core
-        gtest_main
-)
+# target_link_libraries(cpu_tests
+#     PRIVATE
+#         Chip8Core
+#         gtest_main
+# )
 
-add_executable(ram_tests
+# add_executable(ram_tests
+#     tests/test_ram.cpp
+# )
+
+# target_link_libraries(ram_tests
+#     PRIVATE
+#         Chip8Core
+#         gtest_main
+# )
+###
+
+add_executable(unit_tests
     tests/test_ram.cpp
+    tests/test_cpu.cpp
+    # Add other test sources here
 )
 
-target_link_libraries(ram_tests
+target_link_libraries(unit_tests
     PRIVATE
         Chip8Core
         gtest_main
 )
-
 # include_directories(include)
 
 # set(SOURCES

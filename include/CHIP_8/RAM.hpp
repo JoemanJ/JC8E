@@ -2,13 +2,16 @@
 #include "commons.hpp"
 #include <array>
 
-inline constexpr addr_t RAM_SIZE = 4*1024;
+inline constexpr addr_t RAM_SIZE = 4*1024; //4kB
 
 class RAM{
     private:
         std::array<byte_t, RAM_SIZE> memory;
 
     public:
+        // Initializes memory with all zeros
+        RAM();
+
         // Reads byte from address
         byte_t read(addr_t address){
             return memory.at(address);
