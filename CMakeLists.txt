@@ -9,42 +9,34 @@ add_library(
     Chip8Core
     src/CHIP_8/CPU.cpp
     src/CHIP_8/RAM.cpp
+    src/CHIP_8/display.cpp
 )
 target_include_directories(Chip8Core PUBLIC include)
 
-# GoogleTest for unit testing
 include(FetchContent)
+# SFML 2.6.2
+FetchContent_Declare(
+    SFML
+    GIT_REPOSITORY https://github.com/SFML/SFML.git
+    GIT_TAG        2.6.2
+)
+
+set(SFML_BUILD_AUDIO FALSE)
+set(SFML_BUILD_NETWORK FALSE)
+
+FetchContent_MakeAvailable(SFML)
+
+# GoogleTest for unit testing
 FetchContent_Declare(
     googletest
     URL https://github.com/google/googletest/archive/refs/heads/main.zip 
 )
 FetchContent_MakeAvailable(googletest)
 
-###
-# add_executable(cpu_tests
-#     tests/test_cpu.cpp
-# )
-
-# target_link_libraries(cpu_tests
-#     PRIVATE
-#         Chip8Core
-#         gtest_main
-# )
-
-# add_executable(ram_tests
-#     tests/test_ram.cpp
-# )
-
-# target_link_libraries(ram_tests
-#     PRIVATE
-#         Chip8Core
-#         gtest_main
-# )
-###
-
 add_executable(unit_tests
     tests/test_ram.cpp
     tests/test_cpu.cpp
+    tests/test_display.cpp
     # Add other test sources here
 )
 
@@ -52,6 +44,15 @@ target_link_libraries(unit_tests
     PRIVATE
         Chip8Core
         gtest_main
+)
+
+add_executable(JC8E
+    src/main.cpp
+)
+
+target_link_libraries(JC8E
+    Chip8Core
+    sfml-graphics
 )
 # include_directories(include)
 

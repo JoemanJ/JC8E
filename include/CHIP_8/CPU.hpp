@@ -31,21 +31,13 @@ class CPU{
     // For unit tests
     friend class CPUTest;
 
-        public:
-            /* Creates a new CPU with:
-            memory:  standard font from 0x050 to 0x09F, al other addresses are 0x00
-            regs: all 0
-            PC: 0x200
-            I: 0*/
-            CPU(RAM& ram): memory(ram){
-            // Copy font to memory
-            memory.bulkWrite(0x50, FONT);
-            
-            // Initialize registers
-            regs = std::array<byte_t, 16>();
-            PC = 0x200;
-            I = 0x0;
-        };
+    public:
+        /* Creates a new CPU with:
+        memory:  standard font from 0x050 to 0x09F, al other addresses are 0x00
+        regs: all 0
+        PC: 0x200
+        I: 0*/
+        CPU(RAM& ram);
 
         byte_t memRead (addr_t address) const; // Read byte from RAM address.
         
