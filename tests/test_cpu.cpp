@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include <array>
 #include "CHIP_8/CPU.hpp"
 #include "CHIP_8/RAM.hpp"
@@ -7,10 +8,23 @@
 
 using namespace std;
 
+class MockRAM : public IRAM {
+    public:
+        MOCK_METHOD(void, write, (addr_t address, byte_t value), (override));
+        MOCK_METHOD(byte_t, read, (addr_t address), (const, override));
+        MOCK_METHOD(void, bulkWrite, (addr_t startAddress, std::size_t size, const byte_t *data), (override));
+};
+
+class MockDisplay : public IDisplay {
+    public:
+        MOCK_METHOD(void, togglePixel, (byte_t x, byte_t y), (override));
+        MOCK_METHOD(void, clear, (), (override));
+};
+
 class CPUTest : public testing::Test {
     protected:
-        RAM ram;
-        Display display;
+        MockRAM ram;
+        MockDisplay display;
         CPU cpu;
 
         // Auxiliary functions to access private members

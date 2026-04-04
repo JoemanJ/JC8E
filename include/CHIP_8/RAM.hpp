@@ -14,7 +14,7 @@ class RAM : public IRAM{
         RAM();
 
         // Reads byte from address
-        byte_t read(addr_t address) override {return memory.at(address);}
+        byte_t read(addr_t address) const override {return memory.at(address);}
 
         // Writes a single byte of data to address
         void write(addr_t address, byte_t data) override {memory.at(address) = data;}

@@ -43,6 +43,7 @@ add_executable(unit_tests
 target_link_libraries(unit_tests
     PRIVATE
         Chip8Core
+        gmock
         gtest_main
 )
 
