@@ -31,7 +31,7 @@ TEST_F(RAMTest, CanWriteToMemoryInBulk){
     ASSERT_EQ(ram[3], 4);
     ASSERT_EQ(ram[4], 5);
 
-    ram.bulkWrite(0x0000, bytes);   
+    ram.bulkWrite(0x0000, 5, bytes);
     ASSERT_EQ(ram[0], 1);
     ASSERT_EQ(ram[1], 2);
     ASSERT_EQ(ram[2], 3);

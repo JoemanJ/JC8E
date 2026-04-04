@@ -2,7 +2,8 @@
 #include <array>
 #include <stack>
 #include "commons.hpp"
-#include "RAM.hpp"
+#include "IRAM.hpp"
+#include "Idisplay.hpp"
 
 // Forward declaration in case we don't compile with googleTest
 class CPUTest;
@@ -37,8 +38,8 @@ class CPU{
         regs: all 0
         PC: 0x200
         I: 0*/
-        CPU(RAM& ram);
-
+        CPU(IRAM& ram, IDisplay& display);
+        
         byte_t memRead (addr_t address) const; // Read byte from RAM address.
         
         /* Reads value from a general purpose register.
@@ -49,11 +50,12 @@ class CPU{
         byte_t regRead(char reg) const;
         
         addr_t IRead() const; // Reads value from index register.
-    
-        addr_t PCRead() const; // Reads value from PC register.
-
+        
+        addr_t PCRead() const {return PC;} // Reads value from PC register.
+        
     private:
-        RAM& memory; // RAM Memory.
+        IRAM& memory; // RAM Memory.
+        IDisplay& display; // Display with binary pixel resolution
         std::array<byte_t, 16> regs; // General purpose registers.
         // std::stack<addr_t> stack; // Address stack.
         addr_t PC; // Program Counter register.
@@ -76,5 +78,8 @@ class CPU{
         void IWrite(addr_t value); // Writes value to index register.
 
         /* Fetches next 16-bit instruction (from PC and PC+1) and updates PC */
-        uint16_t fetch();
+        instruction_t fetch();
+
+        // Decodes and executes given instruction
+        void decode_execute(instruction_t instruction);
 };
