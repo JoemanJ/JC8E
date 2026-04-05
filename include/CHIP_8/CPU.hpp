@@ -57,13 +57,13 @@ class CPU{
         IRAM& memory; // RAM Memory.
         IDisplay& display; // Display with binary pixel resolution
         std::array<byte_t, 16> regs; // General purpose registers.
-        // std::stack<addr_t> stack; // Address stack.
+        std::stack<addr_t> stack; // Address stack.
         addr_t PC; // Program Counter register.
         addr_t I; // Index Register.
         // byte_t delay_timer; // Delay Timer.
         // byte_t sound_timer; // Sound Timer.
         
-        void stackPush(); // Pushes value onto stack.
+        void stackPush(addr_t address); // Pushes value onto stack.
         addr_t stackPop(); // Pops value from stack.
         
         void memWrite(addr_t address, byte_t value); // Write byte do RAM.

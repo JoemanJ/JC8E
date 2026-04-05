@@ -23,20 +23,22 @@ class MockDisplay : public IDisplay {
 
 class CPUTest : public testing::Test {
     protected:
-        MockRAM ram;
-        MockDisplay display;
+        testing::NiceMock<MockRAM> ram;
+        testing::NiceMock<MockDisplay> display;
         CPU cpu;
+        array<byte_t, 16>& regs;
 
         // Auxiliary functions to access private members
         array<byte_t, 16>& getRegs(){return cpu.regs;}
+        stack<addr_t>& getStack(){return cpu.stack;}
         addr_t& getPC(){return cpu.PC;}
         addr_t& getI(){return cpu.I;}
     
     public:
-        CPUTest(): ram(), display(), cpu(ram, display){}
+        CPUTest(): ram(), display(), cpu(ram, display), regs(getRegs()){}
         
         // Public functions that expose the CPU's private functions
-        void stackPush(){cpu.stackPush();};
+        void stackPush(addr_t address){cpu.stackPush(address);};
         addr_t stackPop(){return cpu.stackPop();};
         void memWrite(addr_t address, byte_t value){cpu.memWrite(address, value);}
         void regWrite(uint8_t reg, byte_t value){cpu.regWrite(reg, value);}
@@ -67,25 +69,18 @@ TEST_F(CPUTest, RAMIsAllZeroesUpTo0x50){
     }
 }
 
-TEST_F(CPUTest, RAMHasStandardFontFrom0x50To0x9F){
-    addr_t i = 0x50;
-    for (i=0x50; i<=0x9F; i++){
-        EXPECT_EQ(cpu.memRead(i), FONT[i-0x50]);
-    }
-}
-
-TEST_F(CPUTest, RAMIsAllZerosFromWhereTheStandardFontEndsOn0x9FOnward){
-    addr_t i = 0xA0;
-    for (i=0xA0; i<RAM_SIZE; i++){
-        EXPECT_EQ(cpu.memRead(i), 0x00);
-    }
+TEST_F(CPUTest, CPUWritesStandartFontToRAMOnInitialization){
+    EXPECT_CALL(ram, bulkWrite);
+    CPU cpu_ = CPU(ram, display);
 }
 
 TEST_F(CPUTest, CPUCanWriteAndReadFromRAM){
+    EXPECT_CALL(ram, write).Times(2);
     memWrite(0x00, 0xB0);
     memWrite(RAM_SIZE-1, 0x0B);
-    EXPECT_EQ(cpu.memRead(0x00), 0xB0);
-    EXPECT_EQ(cpu.memRead(RAM_SIZE-1), 0x0B);
+    EXPECT_CALL(ram, read).Times(2);
+    cpu.memRead(0x00);
+    cpu.memRead(RAM_SIZE-1);
 }
 
 TEST_F(CPUTest, FetchIncrementsPCBy2Bytes){
@@ -94,8 +89,136 @@ TEST_F(CPUTest, FetchIncrementsPCBy2Bytes){
     EXPECT_EQ(cpu.PCRead(), 0x0202);
 }
 
-TEST_F(CPUTest, FetchReturnsTheNextInstruction){
-    memWrite(0x200, 0xB0);
-    memWrite(0x201, 0x0B);
-    EXPECT_EQ(fetch(), 0xB00B);
+TEST_F(CPUTest, Instruction00E0ClearScreenCallsDisplayClear){
+    EXPECT_CALL(display, clear()).Times(1);
+    
+    decode_execute(0x00E0);
 }
+
+TEST_F(CPUTest, InvalidInstructionThrowsException){
+    EXPECT_THROW(decode_execute(0x0000),invalid_argument); // 0x0NNN is not implemented
+}
+
+TEST_F(CPUTest, Instruction1NNNJumpChangesPC){
+    decode_execute(0x1ABC);
+    EXPECT_EQ(cpu.PCRead(), 0x0ABC);
+    decode_execute(0x1000);
+    EXPECT_EQ(cpu.PCRead(), 0x0000);
+    decode_execute(0x1FFF);
+    EXPECT_EQ(cpu.PCRead(), 0x0FFF);
+}
+
+TEST_F(CPUTest, StackOperationsWork){
+    stackPush(0xABCD);
+    EXPECT_EQ(stackPop(), 0xABCD);
+}
+
+TEST_F(CPUTest, Instructions0NNNSubroutineAnd00EEReturnWork){
+    stack<addr_t>& stack = getStack();
+    ASSERT_EQ(cpu.PCRead(), 0x0200);
+
+    decode_execute(0x2ABC);
+    ASSERT_FALSE(stack.empty());
+    EXPECT_EQ(stack.top(), 0x0200);
+    EXPECT_EQ(cpu.PCRead(), 0x0ABC);
+
+    decode_execute(0x00EE);
+    EXPECT_TRUE(stack.empty());
+    EXPECT_EQ(cpu.PCRead(), 0x0200);
+}
+
+TEST_F(CPUTest, Instruction3XNNSkipIfVXEqualNNWorks){
+    decode_execute(0x3000);
+    EXPECT_EQ(cpu.PCRead(), 0x202);
+
+    regs.at(0xA) = 0xBC;
+    decode_execute(0x3ABC);
+    EXPECT_EQ(cpu.PCRead(), 0x204);
+
+    regs.at(0xB) = 0xCD;
+    decode_execute(0x3B00);
+    EXPECT_EQ(cpu.PCRead(), 0x204);
+}
+
+TEST_F(CPUTest, Instruction4XNNSkipIfVXNotEqualNNWorks){
+    decode_execute(0x4000);
+    EXPECT_EQ(cpu.PCRead(), 0x200);
+
+    regs.at(0xA) = 0xBC;
+    decode_execute(0x4ABC);
+    EXPECT_EQ(cpu.PCRead(), 0x200);
+
+    regs.at(0xB) = 0xCD;
+    decode_execute(0x4B00);
+    EXPECT_EQ(cpu.PCRead(), 0x202);
+}
+
+TEST_F(CPUTest, Instruction5XY0SkipIfVXEqualVYWorks){
+    decode_execute(0x5000);
+    EXPECT_EQ(cpu.PCRead(), 0x202);
+
+    regs.at(0x0) = 0x12;
+    regs.at(0x1) = 0x12;
+    decode_execute(0x5010);
+    EXPECT_EQ(cpu.PCRead(), 0x204);
+
+    regs.at(0x1) = 0x13;
+    decode_execute(0x5010);
+    EXPECT_EQ(cpu.PCRead(), 0x204);
+}
+
+TEST_F(CPUTest, Instruction9XY0SkipIfVXNotEqualVYWorks){
+    decode_execute(0x9000);
+    EXPECT_EQ(cpu.PCRead(), 0x200);
+
+    regs.at(0x0) = 0x12;
+    regs.at(0x1) = 0x12;
+    decode_execute(0x9010);
+    EXPECT_EQ(cpu.PCRead(), 0x200);
+
+    regs.at(0x1) = 0x13;
+    decode_execute(0x9010);
+    EXPECT_EQ(cpu.PCRead(), 0x202);
+}
+
+TEST_F(CPUTest, Instruction6XNNSetRegisterXToNNWorks){
+    decode_execute(0x60AB);
+    EXPECT_EQ(regs.at(0x0), 0xAB);
+    decode_execute(0x6FFF);
+    EXPECT_EQ(regs.at(0xF), 0xFF);
+}
+
+TEST_F(CPUTest, Instruction7XNNAddNNToVXWorks){
+    decode_execute(0x7012);
+    EXPECT_EQ(regs.at(0), 0x12);
+    decode_execute(0x7012);
+    EXPECT_EQ(regs.at(0), 0x24);
+    decode_execute(0x7012);
+    EXPECT_EQ(regs.at(0), 0x36);
+
+    regs.at(0xF) = 0xFF;
+    decode_execute(0x7F01);
+    EXPECT_EQ(regs.at(0xF), 0x00); // overflow
+}
+
+//TODO: turn these into integration tests
+
+// TEST_F(CPUTest, RAMHasStandardFontFrom0x50To0x9F){
+//     addr_t i = 0x50;
+//     for (i=0x50; i<=0x9F; i++){
+//         EXPECT_EQ(cpu.memRead(i), FONT[i-0x50]);
+//     }
+// }
+
+// TEST_F(CPUTest, RAMIsAllZerosFromWhereTheStandardFontEndsOn0x9FOnward){
+//     addr_t i = 0xA0;
+//     for (i=0xA0; i<RAM_SIZE; i++){
+//         EXPECT_EQ(cpu.memRead(i), 0x00);
+//     }
+// }
+
+// TEST_F(CPUTest, FetchReturnsTheNextInstruction){
+//     memWrite(0x200, 0xB0);
+//     memWrite(0x201, 0x0B);
+//     EXPECT_EQ(fetch(), 0xB00B);
+// }
