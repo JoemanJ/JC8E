@@ -211,7 +211,7 @@ TEST_F(CPUTest, Instruction8XY0SetVXToVYWorks){
     EXPECT_EQ(regs.at(0x1), 0xFF);
 }
 
-TEST_F(CPUTest, Instruction8XY1VXBecomesBinaryOrBetweenVXAndVYWorks){
+TEST_F(CPUTest, Instruction8XY1VXBecomesBinaryORBetweenVXAndVYWorks){
     regs.at(0x1) = 0b10101010;
     decode_execute(0x8011);
     EXPECT_EQ(regs.at(0x0), 0b10101010);
@@ -235,7 +235,7 @@ TEST_F(CPUTest, Instruction8XY1VXBecomesBinaryOrBetweenVXAndVYWorks){
     EXPECT_EQ(regs.at(0xC), 0b00001111);
 }
 
-TEST_F(CPUTest, Instruction8XY2VXBecomesBinaryAndBetweenVXAndVYWorks){
+TEST_F(CPUTest, Instruction8XY2VXBecomesBinaryANDBetweenVXAndVYWorks){
     regs.at(0x1) = 0b10101010;
     regs.at(0x2) = 0b01010101;
     regs.at(0x3) = 0b00000011;
@@ -243,7 +243,7 @@ TEST_F(CPUTest, Instruction8XY2VXBecomesBinaryAndBetweenVXAndVYWorks){
     EXPECT_EQ(regs.at(0x0), 0b00000000);
 
     decode_execute(0x8122);
-    EXPECT_EQ(regs.at(0x0), 0b00000000);
+    EXPECT_EQ(regs.at(0x1), 0b00000000);
 
     regs.at(0x1) = 0b10101010;
 
@@ -252,6 +252,20 @@ TEST_F(CPUTest, Instruction8XY2VXBecomesBinaryAndBetweenVXAndVYWorks){
 
     decode_execute(0x8232);
     EXPECT_EQ(regs.at(0x2), 0b00000001);
+}
+
+TEST_F(CPUTest, Instruction8XY3VXBecomesBinaryXORBetweenVXAndVYWorks){
+    regs.at(0x1) = 0b10101010;
+    regs.at(0x2) = 0b01010101;
+    regs.at(0x3) = 0b00000011;
+    decode_execute(0x8013);
+    EXPECT_EQ(regs.at(0x0), 0b10101010);
+
+    decode_execute(0x8123);
+    EXPECT_EQ(regs.at(0x1), 0b11111111);
+
+    decode_execute(0x8113);
+    EXPECT_EQ(regs.at(0x1), 0b00000000);
 }
 
 //TODO: turn these into integration tests
