@@ -4,10 +4,10 @@
 #include "CHIP_8/CPU.hpp"
 
 using namespace std;
-CPU::CPU(IRAM& ram, IDisplay& display, bool USE_ORIGINAL_SHIFT_BEHAVIOR):
+CPU::CPU(IRAM& ram, IDisplay& display, bool USE_LEGACY_BEHAVIOR):
 memory(ram),
 display(display),
-USE_ORIGINAL_SHIFT_BEHAVIOR(USE_ORIGINAL_SHIFT_BEHAVIOR)
+USE_LEGACY_BEHAVIOR(USE_LEGACY_BEHAVIOR)
 {
     // Copy font to memory
     memory.bulkWrite(0x50, sizeof(FONT), FONT);
@@ -161,7 +161,7 @@ void CPU::decode_execute(instruction_t instruction){
                     break;
 
                 case 6: // 0x8XY6 Shift VX 1 bit to the right
-                    if (USE_ORIGINAL_SHIFT_BEHAVIOR) regs.at(X) = regs.at(Y);
+                    if (USE_LEGACY_BEHAVIOR) regs.at(X) = regs.at(Y);
                     if(regs.at(X) & 0b00000001) setFlag();
                     else resetFlag();
                     regs.at(X) = regs.at(X) >> 1;
@@ -174,7 +174,7 @@ void CPU::decode_execute(instruction_t instruction){
                     break;
 
                 case 0xE: //0x8XYE Shift VX 1 bit to the left
-                    if (USE_ORIGINAL_SHIFT_BEHAVIOR) regs.at(X) = regs.at(Y);
+                    if (USE_LEGACY_BEHAVIOR) regs.at(X) = regs.at(Y);
                     if(regs.at(X) & 0b10000000) setFlag();
                     else resetFlag();
                     regs.at(X) = regs.at(X) << 1;
@@ -196,8 +196,14 @@ void CPU::decode_execute(instruction_t instruction){
             }
             break;
 
-        case 0xA: //0xANNN Set index register to NNN 
+        case 0xA: // 0xANNN Set index register to NNN 
             I = NNN;
+            break;
+
+        case 0xB: // 0xBNNN Jump to NNN with offset
+            PC = NNN;
+            if (USE_LEGACY_BEHAVIOR) PC += regs.at(0); // offset is V0 in legacy behavior
+            else PC += regs.at(X); // offset is VX in modern behavior 
             break;
 
         case 0xC: // 0xCXNN VX = (random number) AND NN (binary AND)

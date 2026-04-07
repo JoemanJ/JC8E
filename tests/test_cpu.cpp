@@ -387,7 +387,7 @@ TEST_F(CPUTest, Instruction8XY6ShiftVXLeftLegacyBehaviorWorks){
     EXPECT_EQ(regs.at(0xF), 0);
 }
 
-TEST_F(CPUTest, InstructionANNNSetIndexRegisterToNNN){
+TEST_F(CPUTest, InstructionANNNSetIndexRegisterToNNNWorks){
     decode_execute(0xA123);
     EXPECT_EQ(cpu.IRead(), 0x0123);
     decode_execute(0xAFFF);
@@ -396,6 +396,35 @@ TEST_F(CPUTest, InstructionANNNSetIndexRegisterToNNN){
     EXPECT_EQ(cpu.IRead(), 0x0BCD);
     decode_execute(0xA000);
     EXPECT_EQ(cpu.IRead(), 0x0000);
+}
+
+TEST_F(CPUTest, InstructionBNNNJumpWithOffsetLegacyBehaviorWorks){
+    CPU cpu(ram, display, true);
+    array<byte_t, 16>& regs = getRegs(cpu);
+    
+    regs.at(0x0) = 1;
+    decode_execute(cpu, 0xB123);
+    EXPECT_EQ(cpu.PCRead(), 0x0124);
+    decode_execute(cpu, 0xBFFF);
+    EXPECT_EQ(cpu.PCRead(), 0x1000);
+    decode_execute(cpu, 0xBBCD);
+    EXPECT_EQ(cpu.PCRead(), 0x0BCE);
+    decode_execute(cpu, 0xB000);
+    EXPECT_EQ(cpu.PCRead(), 0x0001);
+}
+
+TEST_F(CPUTest, InstructionBNNNJumpWithOffsetModernBehaviorWorks){
+    regs.at(0x0) = 1;
+    regs.at(0x1) = 2;
+    regs.at(0xB) = 3;
+    decode_execute(0xB123);
+    EXPECT_EQ(cpu.PCRead(), 0x0125);
+    decode_execute(0xBFFF);
+    EXPECT_EQ(cpu.PCRead(), 0x0FFF);
+    decode_execute(0xBBCD);
+    EXPECT_EQ(cpu.PCRead(), 0x0BD0);
+    decode_execute(0xB000);
+    EXPECT_EQ(cpu.PCRead(), 0x0001);
 }
 
 // This is commented because it has a 1/256 chance to fail randomly
