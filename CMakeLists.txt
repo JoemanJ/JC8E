@@ -55,13 +55,3 @@ target_link_libraries(JC8E
     Chip8Core
     sfml-graphics
 )
-# include_directories(include)
-
-# set(SOURCES
-#     src/main.cpp
-# )
-
-# add_executable(JC8E ${SOURCES})
-
-# find_package(SFML 2.6 COMPONENTS window graphics REQUIRED)
-# target_link_libraries(JC8E sfml-graphics sfml-window)

@@ -201,6 +201,16 @@ TEST_F(CPUTest, Instruction7XNNAddNNToVXWorks){
     EXPECT_EQ(regs.at(0xF), 0x00); // overflow
 }
 
+TEST_F(CPUTest, Instruction8XY0SetVXToVYWorks){
+    regs.at(0x1) = 0x25;
+    decode_execute(0x8010);
+    EXPECT_EQ(regs.at(0x0), 0x25);
+    
+    regs.at(0xF) = 0xFF;
+    decode_execute(0x81F0);
+    EXPECT_EQ(regs.at(0x1), 0xFF);
+}
+
 //TODO: turn these into integration tests
 
 // TEST_F(CPUTest, RAMHasStandardFontFrom0x50To0x9F){

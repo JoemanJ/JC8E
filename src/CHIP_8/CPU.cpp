@@ -112,6 +112,17 @@ void CPU::decode_execute(instruction_t instruction){
             regs.at(X) += NN;
             break;
 
+        case 0x8: // Logic and arithmetic instructions
+            switch(N){
+                case 0: // 8XY0 Set VX to VY
+                    regs.at(X) = regs.at(Y);
+                    break;
+
+                default:
+                    throw invalidInstruction(instruction);
+            }
+            break;
+
         case 0x9:
             switch(N){
                 case 0: // 0x9XY0 - Skip instruction if VX != VY
