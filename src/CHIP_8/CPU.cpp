@@ -12,6 +12,9 @@ CPU::CPU(IRAM& ram, IDisplay& display): memory(ram), display(display){
     regs = std::array<byte_t, 16>();
     PC = 0x200;
     I = 0x0;
+
+    // Initialize random number generator
+    RNG = mt19937(random_device()());
 }
 
 byte_t CPU::memRead(addr_t address) const{
@@ -84,26 +87,26 @@ void CPU::decode_execute(instruction_t instruction){
             }
             break;
         
-        case 0x1: // 0x1NNN = Jump to NNN
+        case 0x1: // 0x1NNN Jump to NNN
             PC = NNN;
             break;
 
-        case 0x2: // 0x2NNN = Call subroutine at NNN
+        case 0x2: // 0x2NNN Call subroutine at NNN
             stack.push(PC);
             PC = NNN;
             break;
 
-        case 0x3: // 0x3XNN = Skip instruction if VX = NN
+        case 0x3: // 0x3XNN Skip instruction if VX = NN
             if (regs.at(X) == NN) PC += 2;
             break;
 
-        case 0x4: // 0x4XNN = Skip instruction if VX !- NN
+        case 0x4: // 0x4XNN Skip instruction if VX !- NN
             if (regs.at(X) != NN) PC += 2;
             break;
 
         case 0x5:
             switch(N){
-                case 0: // 0x5XY0 - Skip instruction if VX == VY
+                case 0: // 0x5XY0 Skip instruction if VX == VY
                     if (regs.at(X) == regs.at(Y)) PC += 2;   
                     break;
                 
@@ -112,11 +115,11 @@ void CPU::decode_execute(instruction_t instruction){
             }
             break;
 
-        case 0x6: // 0x6XNN = Set VX to NN
+        case 0x6: // 0x6XNN Set VX to NN
             regs.at(X) = NN;
             break;
 
-        case 0x7: // 0x7XNN = VX = VX + NN. Carry flag is NOT affected
+        case 0x7: // 0x7XNN VX = VX + NN. Carry flag is NOT affected
             regs.at(X) += NN;
             break;
 
@@ -146,7 +149,13 @@ void CPU::decode_execute(instruction_t instruction){
                     regs.at(X) += regs.at(Y);
                     break;
                 }
-                
+
+                case 5: // 0x8XY5 VX = VX - VY
+                    if(regs.at(Y) > regs.at(X)) resetFlag();
+                    else setFlag();
+                    regs.at(X) -= regs.at(Y);
+                    break;
+
                 default:
                     throw invalidInstruction(instruction);
             }
@@ -154,7 +163,7 @@ void CPU::decode_execute(instruction_t instruction){
 
         case 0x9:
             switch(N){
-                case 0: // 0x9XY0 - Skip instruction if VX != VY
+                case 0: // 0x9XY0 Skip instruction if VX != VY
                     if (regs.at(X) != regs.at(Y)) PC += 2;   
                     break;
                 
@@ -162,6 +171,13 @@ void CPU::decode_execute(instruction_t instruction){
                 throw invalidInstruction(instruction);
             }
             break;
+
+        case 0xC: // 0xCXNN VX = (random number) AND NN (binary AND)
+        {
+            byte_t random = uniform_int_distribution(0, 255)(RNG);
+            regs.at(X) = random & NN;
+            break;
+        }
 
         default:
             throw invalidInstruction(instruction);            

@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <stack>
+#include <random>
 #include "commons.hpp"
 #include "IRAM.hpp"
 #include "Idisplay.hpp"
@@ -62,6 +63,7 @@ class CPU{
         addr_t I; // Index Register.
         // byte_t delay_timer; // Delay Timer.
         // byte_t sound_timer; // Sound Timer.
+        std::mt19937 RNG; // Random Number Generator
         
         void stackPush(addr_t address); // Pushes value onto stack.
         addr_t stackPop(); // Pops value from stack.

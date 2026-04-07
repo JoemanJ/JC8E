@@ -268,7 +268,7 @@ TEST_F(CPUTest, Instruction8XY3VXBecomesBinaryXORBetweenVXAndVYWorks){
     EXPECT_EQ(regs.at(0x1), 0b00000000);
 }
 
-TEST_F(CPUTest, Instruction8XY4VXBecomesVXPlusVYWorks){
+TEST_F(CPUTest, Instruction8XY4VXBecomesVXPlusVYAndAffectsCarryFlagWorks){
     regs.at(0x1) = 1;
     regs.at(0x2) = 2;
     regs.at(0x3) = 3;
@@ -287,6 +287,32 @@ TEST_F(CPUTest, Instruction8XY4VXBecomesVXPlusVYWorks){
     EXPECT_EQ(regs.at(0x0), 3);
     EXPECT_EQ(regs.at(0xF), 0);
 }
+
+TEST_F(CPUTest, Instruction8XY5VXBecomesVXMinusVYAndAffectsCarryFlagWorks){
+    regs.at(0x0) = 6;
+    regs.at(0x1) = 1;
+    regs.at(0x2) = 2;
+    regs.at(0x3) = 3;
+    decode_execute(0x8015);
+    EXPECT_EQ(regs.at(0x0), 5);
+    EXPECT_EQ(regs.at(0xF), 1);
+    decode_execute(0x8025);
+    EXPECT_EQ(regs.at(0x0), 3);
+    EXPECT_EQ(regs.at(0xF), 1);
+    decode_execute(0x8035);
+    EXPECT_EQ(regs.at(0x0), 0);
+    EXPECT_EQ(regs.at(0xF), 1);
+
+    decode_execute(0x8015);
+    EXPECT_EQ(regs.at(0x0), 255);
+    EXPECT_EQ(regs.at(0xF), 0);
+}
+
+// This is commented because it has a 1/256 chance to fail randomly
+// TEST_F(CPUTest, InstructionCXNNGenerateARandomNumberANDItWithNNAndPutTheResultInVXWorks){
+//     decode_execute(0xC0FF);
+//     EXPECT_NE(regs.at(0x0), 0);
+// }
 
 //TODO: turn these into integration tests
 
