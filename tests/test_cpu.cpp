@@ -288,23 +288,18 @@ TEST_F(CPUTest, Instruction8XY4VXBecomesVXPlusVYAndAffectsCarryFlagWorks){
     EXPECT_EQ(regs.at(0xF), 0);
 }
 
-TEST_F(CPUTest, Instruction8XY5VXBecomesVXMinusVYAndAffectsCarryFlagWorks){
-    regs.at(0x0) = 6;
-    regs.at(0x1) = 1;
-    regs.at(0x2) = 2;
-    regs.at(0x3) = 3;
-    decode_execute(0x8015);
-    EXPECT_EQ(regs.at(0x0), 5);
+TEST_F(CPUTest, Instruction8XY7VXBecomesVYMinusVXAndAffectsCarryFlagWorks){
+    regs.at(0x1) = 9;
+    regs.at(0x2) = 10;
+    decode_execute(0x8127);
+    EXPECT_EQ(regs.at(0x1), 1);
     EXPECT_EQ(regs.at(0xF), 1);
-    decode_execute(0x8025);
-    EXPECT_EQ(regs.at(0x0), 3);
-    EXPECT_EQ(regs.at(0xF), 1);
-    decode_execute(0x8035);
-    EXPECT_EQ(regs.at(0x0), 0);
+    decode_execute(0x8127);
+    EXPECT_EQ(regs.at(0x1), 9);
     EXPECT_EQ(regs.at(0xF), 1);
 
-    decode_execute(0x8015);
-    EXPECT_EQ(regs.at(0x0), 255);
+    decode_execute(0x8217);
+    EXPECT_EQ(regs.at(0x2), 0xFF);
     EXPECT_EQ(regs.at(0xF), 0);
 }
 

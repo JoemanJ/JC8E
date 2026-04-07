@@ -141,7 +141,7 @@ void CPU::decode_execute(instruction_t instruction){
                     regs.at(X) = regs.at(X) ^ regs.at(Y);
                     break;
 
-                case 4: // 0x8XY4 XY = VX + VY. Carry flag IS affected
+                case 4: // 0x8XY4 XY = VX + VY. Carry flag set on overflow
                 {
                     uint16_t result = regs.at(X) + regs.at(Y);
                     if (result > 255) setFlag();
@@ -150,10 +150,16 @@ void CPU::decode_execute(instruction_t instruction){
                     break;
                 }
 
-                case 5: // 0x8XY5 VX = VX - VY
+                case 5: // 0x8XY5 VX = VX - VY. Carry flag set if underflow doesn't occur
                     if(regs.at(Y) > regs.at(X)) resetFlag();
                     else setFlag();
                     regs.at(X) -= regs.at(Y);
+                    break;
+
+                case 7: // 0x8XY7 VX = VY - VX. Carry flag set if underflow doesn't occur
+                    if(regs.at(X) > regs.at(Y)) resetFlag();
+                    else setFlag();
+                    regs.at(X) = regs.at(Y) - regs.at(X);
                     break;
 
                 default:
