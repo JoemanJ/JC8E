@@ -387,6 +387,17 @@ TEST_F(CPUTest, Instruction8XY6ShiftVXLeftLegacyBehaviorWorks){
     EXPECT_EQ(regs.at(0xF), 0);
 }
 
+TEST_F(CPUTest, InstructionANNNSetIndexRegisterToNNN){
+    decode_execute(0xA123);
+    EXPECT_EQ(cpu.IRead(), 0x0123);
+    decode_execute(0xAFFF);
+    EXPECT_EQ(cpu.IRead(), 0x0FFF);
+    decode_execute(0xABCD);
+    EXPECT_EQ(cpu.IRead(), 0x0BCD);
+    decode_execute(0xA000);
+    EXPECT_EQ(cpu.IRead(), 0x0000);
+}
+
 // This is commented because it has a 1/256 chance to fail randomly
 // TEST_F(CPUTest, InstructionCXNNGenerateARandomNumberANDItWithNNAndPutTheResultInVXWorks){
 //     decode_execute(0xC0FF);

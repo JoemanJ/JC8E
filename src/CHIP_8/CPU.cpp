@@ -196,6 +196,10 @@ void CPU::decode_execute(instruction_t instruction){
             }
             break;
 
+        case 0xA: //0xANNN Set index register to NNN 
+            I = NNN;
+            break;
+
         case 0xC: // 0xCXNN VX = (random number) AND NN (binary AND)
         {
             byte_t random = uniform_int_distribution(0, 255)(RNG);

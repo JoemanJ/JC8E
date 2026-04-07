@@ -50,7 +50,7 @@ class CPU{
         Valid values for reg are '0' to '9' and 'A' to 'F' */
         byte_t regRead(char reg) const;
         
-        addr_t IRead() const; // Reads value from index register.
+        addr_t IRead() const {return I;} // Reads value from index register.
         
         addr_t PCRead() const {return PC;} // Reads value from PC register.
         
