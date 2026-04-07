@@ -122,6 +122,10 @@ void CPU::decode_execute(instruction_t instruction){
                     regs.at(X) = regs.at(X) | regs.at(Y);
                     break;
 
+                case 2: // 0x8XY2 VX = VX AND VY (bitwise)
+                    regs.at(X) = regs.at(X) & regs.at(Y);
+                    break;
+
                 default:
                     throw invalidInstruction(instruction);
             }
