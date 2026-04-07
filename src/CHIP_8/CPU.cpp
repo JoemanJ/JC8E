@@ -114,8 +114,12 @@ void CPU::decode_execute(instruction_t instruction){
 
         case 0x8: // Logic and arithmetic instructions
             switch(N){
-                case 0: // 8XY0 Set VX to VY
+                case 0: // 0x8XY0 Set VX to VY
                     regs.at(X) = regs.at(Y);
+                    break;
+
+                case 1: // 0x8XY1 VX = VX OR VY (bitwise)
+                    regs.at(X) = regs.at(X) | regs.at(Y);
                     break;
 
                 default:
