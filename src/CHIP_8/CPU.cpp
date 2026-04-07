@@ -50,6 +50,14 @@ inline invalid_argument invalidInstruction(instruction_t instruction){
     return invalid_argument(exceptionText.str());
 }
 
+inline void CPU::setFlag(){
+    regs.at(0xF) = 1;
+}
+
+inline void CPU::resetFlag(){
+    regs.at(0xF) = 0;
+}
+
 void CPU::decode_execute(instruction_t instruction){
     // Separate instruction into pieces
     instruction_t TYPE, X, Y, N, NN, NNN;
@@ -108,7 +116,7 @@ void CPU::decode_execute(instruction_t instruction){
             regs.at(X) = NN;
             break;
 
-        case 0x7: // 0x7XNN = Add NN to VX
+        case 0x7: // 0x7XNN = VX = VX + NN. Carry flag is NOT affected
             regs.at(X) += NN;
             break;
 
@@ -130,6 +138,15 @@ void CPU::decode_execute(instruction_t instruction){
                     regs.at(X) = regs.at(X) ^ regs.at(Y);
                     break;
 
+                case 4: // 0x8XY4 XY = VX + VY. Carry flag IS affected
+                {
+                    uint16_t result = regs.at(X) + regs.at(Y);
+                    if (result > 255) setFlag();
+                    else resetFlag();
+                    regs.at(X) += regs.at(Y);
+                    break;
+                }
+                
                 default:
                     throw invalidInstruction(instruction);
             }

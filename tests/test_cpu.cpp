@@ -268,6 +268,26 @@ TEST_F(CPUTest, Instruction8XY3VXBecomesBinaryXORBetweenVXAndVYWorks){
     EXPECT_EQ(regs.at(0x1), 0b00000000);
 }
 
+TEST_F(CPUTest, Instruction8XY4VXBecomesVXPlusVYWorks){
+    regs.at(0x1) = 1;
+    regs.at(0x2) = 2;
+    regs.at(0x3) = 3;
+    regs.at(0x4) = 256-6;
+    decode_execute(0x8014);
+    EXPECT_EQ(regs.at(0x0), 1);
+    decode_execute(0x8024);
+    EXPECT_EQ(regs.at(0x0), 3);
+    decode_execute(0x8034);
+    EXPECT_EQ(regs.at(0x0), 6);
+
+    decode_execute(0x8044);
+    EXPECT_EQ(regs.at(0x0), 0);
+    EXPECT_EQ(regs.at(0xF), 1);
+    decode_execute(0x8034);
+    EXPECT_EQ(regs.at(0x0), 3);
+    EXPECT_EQ(regs.at(0xF), 0);
+}
+
 //TODO: turn these into integration tests
 
 // TEST_F(CPUTest, RAMHasStandardFontFrom0x50To0x9F){

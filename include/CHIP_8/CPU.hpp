@@ -82,4 +82,7 @@ class CPU{
 
         // Decodes and executes given instruction
         void decode_execute(instruction_t instruction);
+
+        void setFlag(); // Sets flag register (VF) to 1
+        void resetFlag(); // Sets flag register (VF) to 0
 };
