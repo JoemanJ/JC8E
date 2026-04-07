@@ -4,7 +4,11 @@
 #include "CHIP_8/CPU.hpp"
 
 using namespace std;
-CPU::CPU(IRAM& ram, IDisplay& display): memory(ram), display(display){
+CPU::CPU(IRAM& ram, IDisplay& display, bool USE_ORIGINAL_SHIFT_BEHAVIOR):
+memory(ram),
+display(display),
+USE_ORIGINAL_SHIFT_BEHAVIOR(USE_ORIGINAL_SHIFT_BEHAVIOR)
+{
     // Copy font to memory
     memory.bulkWrite(0x50, sizeof(FONT), FONT);
     
@@ -154,6 +158,13 @@ void CPU::decode_execute(instruction_t instruction){
                     if(regs.at(Y) > regs.at(X)) resetFlag();
                     else setFlag();
                     regs.at(X) -= regs.at(Y);
+                    break;
+
+                case 6: // 0x8XY6 Shift VX 1 bit to the right
+                    if (USE_ORIGINAL_SHIFT_BEHAVIOR) regs.at(X) = regs.at(Y);
+                    if(regs.at(X) & 0x00000001) setFlag();
+                    else resetFlag();
+                    regs.at(X) = regs.at(X) >> 1;
                     break;
 
                 case 7: // 0x8XY7 VX = VY - VX. Carry flag set if underflow doesn't occur

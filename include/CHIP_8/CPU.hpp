@@ -39,7 +39,7 @@ class CPU{
         regs: all 0
         PC: 0x200
         I: 0*/
-        CPU(IRAM& ram, IDisplay& display);
+        CPU(IRAM& ram, IDisplay& display, bool USE_ORIGINAL_SHIFT_BEHAVIOR = false);
         
         byte_t memRead (addr_t address) const; // Read byte from RAM address.
         
@@ -63,7 +63,18 @@ class CPU{
         addr_t I; // Index Register.
         // byte_t delay_timer; // Delay Timer.
         // byte_t sound_timer; // Sound Timer.
+        
         std::mt19937 RNG; // Random Number Generator
+
+        /*
+            Defines the behavior of the shift instructions (0XY6 and 0XYE).
+            If set to false (default): shift instructions will just shift the
+            value of VX left or right.
+            If set to true: shift instructions will first but the value of VY
+            into VX, and then shift the value of VX left or right.
+
+        */
+        bool USE_ORIGINAL_SHIFT_BEHAVIOR = false; 
         
         void stackPush(addr_t address); // Pushes value onto stack.
         addr_t stackPop(); // Pops value from stack.

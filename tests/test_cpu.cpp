@@ -30,6 +30,7 @@ class CPUTest : public testing::Test {
 
         // Auxiliary functions to access private members
         array<byte_t, 16>& getRegs(){return cpu.regs;}
+        array<byte_t, 16>& getRegs(CPU& cpu){return cpu.regs;}
         stack<addr_t>& getStack(){return cpu.stack;}
         addr_t& getPC(){return cpu.PC;}
         addr_t& getI(){return cpu.I;}
@@ -46,6 +47,7 @@ class CPUTest : public testing::Test {
         void IWrite(addr_t value){cpu.IWrite(value);}
         instruction_t fetch(){return cpu.fetch();}
         void decode_execute(instruction_t instruction){cpu.decode_execute(instruction);}
+        void decode_execute(CPU& cpu, instruction_t instruction){cpu.decode_execute(instruction);}
 };
 
 TEST_F(CPUTest, AllGeneralPurposeRegistersStartWith0x00){
@@ -301,6 +303,45 @@ TEST_F(CPUTest, Instruction8XY7VXBecomesVYMinusVXAndAffectsCarryFlagWorks){
     decode_execute(0x8217);
     EXPECT_EQ(regs.at(0x2), 0xFF);
     EXPECT_EQ(regs.at(0xF), 0);
+}
+
+TEST_F(CPUTest, Instruction8XY6ShiftVXRightNewBehaviorWorks){
+    regs.at(0x0) = 1 << 7;
+    decode_execute(0x8006);
+    EXPECT_EQ(regs.at(0x0), 1 << 6);
+    decode_execute(0x8016);
+    EXPECT_EQ(regs.at(0x0), 1 << 5);
+    decode_execute(0x8026);
+    EXPECT_EQ(regs.at(0x0), 1 << 4);
+    decode_execute(0x8036);
+    EXPECT_EQ(regs.at(0x0), 1 << 3);
+    decode_execute(0x8046);
+    EXPECT_EQ(regs.at(0x0), 1 << 2);
+    decode_execute(0x8056);
+    EXPECT_EQ(regs.at(0x0), 1 << 1);
+    decode_execute(0x8066);
+    EXPECT_EQ(regs.at(0x0), 1 << 0);
+    decode_execute(0x8076);
+    EXPECT_EQ(regs.at(0x0), 0);
+    EXPECT_EQ(regs.at(0xF), 1);
+    decode_execute(0x8086);
+    EXPECT_EQ(regs.at(0x0), 0);
+    EXPECT_EQ(regs.at(0xF), 0);
+}
+
+TEST_F(CPUTest, Instruction8XY6ShiftVXRightLegacyBehaviorWorks){
+    CPU cpu(ram, display, true);
+    std::array<byte_t, 16>& regs = getRegs(cpu);
+
+    regs.at(0x1) = 1 << 7;
+    decode_execute(cpu, 0x8016);
+    EXPECT_EQ(regs.at(0x0), 1 << 6);
+    EXPECT_EQ(regs.at(0xF), 0);
+
+    regs.at(0x1) = 1;
+    decode_execute(cpu, 0x8016);
+    EXPECT_EQ(regs.at(0x0), 0);
+    EXPECT_EQ(regs.at(0xF), 1);
 }
 
 // This is commented because it has a 1/256 chance to fail randomly
