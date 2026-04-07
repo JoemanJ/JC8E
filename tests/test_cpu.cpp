@@ -115,7 +115,7 @@ TEST_F(CPUTest, StackOperationsWork){
     EXPECT_EQ(stackPop(), 0xABCD);
 }
 
-TEST_F(CPUTest, Instructions0NNNSubroutineAnd00EEReturnWork){
+TEST_F(CPUTest, Instructions2NNNSubroutineAnd00EEReturnWork){
     stack<addr_t>& stack = getStack();
     ASSERT_EQ(cpu.PCRead(), 0x0200);
 
