@@ -305,7 +305,7 @@ TEST_F(CPUTest, Instruction8XY7VXBecomesVYMinusVXAndAffectsCarryFlagWorks){
     EXPECT_EQ(regs.at(0xF), 0);
 }
 
-TEST_F(CPUTest, Instruction8XY6ShiftVXRightNewBehaviorWorks){
+TEST_F(CPUTest, Instruction8XY6ShiftVXRightModernBehaviorWorks){
     regs.at(0x0) = 1 << 7;
     decode_execute(0x8006);
     EXPECT_EQ(regs.at(0x0), 1 << 6);
@@ -342,6 +342,49 @@ TEST_F(CPUTest, Instruction8XY6ShiftVXRightLegacyBehaviorWorks){
     decode_execute(cpu, 0x8016);
     EXPECT_EQ(regs.at(0x0), 0);
     EXPECT_EQ(regs.at(0xF), 1);
+}
+
+TEST_F(CPUTest, Instruction8XYEShiftVXLeftModernBehaviorWorks){
+    regs.at(0x0) = 1;
+    decode_execute(0x800E);
+    EXPECT_EQ(regs.at(0x0), 1 << 1);
+    decode_execute(0x801E);
+    EXPECT_EQ(regs.at(0x0), 1 << 2);
+    decode_execute(0x802E);
+    EXPECT_EQ(regs.at(0x0), 1 << 3);
+    decode_execute(0x803E);
+    EXPECT_EQ(regs.at(0x0), 1 << 4);
+    decode_execute(0x804E);
+    EXPECT_EQ(regs.at(0x0), 1 << 5);
+    decode_execute(0x805E);
+    EXPECT_EQ(regs.at(0x0), 1 << 6);
+    decode_execute(0x806E);
+    EXPECT_EQ(regs.at(0x0), 1 << 7);
+    decode_execute(0x807E);
+    EXPECT_EQ(regs.at(0x0), 0);
+    EXPECT_EQ(regs.at(0xF), 1);
+    decode_execute(0x808E);
+    EXPECT_EQ(regs.at(0x0), 0);
+    EXPECT_EQ(regs.at(0xF), 0);
+}
+
+TEST_F(CPUTest, Instruction8XY6ShiftVXLeftLegacyBehaviorWorks){
+    CPU cpu(ram, display, true);
+    std::array<byte_t, 16>& regs = getRegs(cpu);
+    
+    regs.at(0x1) = 1;
+    decode_execute(cpu, 0x801E);
+    EXPECT_EQ(regs.at(0x0), 1 << 1);
+    EXPECT_EQ(regs.at(0xF), 0);
+
+    regs.at(0x1) = 1 << 7;
+    decode_execute(cpu, 0x801E);
+    EXPECT_EQ(regs.at(0x0), 0);
+    EXPECT_EQ(regs.at(0xF), 1);
+
+    decode_execute(cpu, 0x800E);
+    EXPECT_EQ(regs.at(0x0), 0);
+    EXPECT_EQ(regs.at(0xF), 0);
 }
 
 // This is commented because it has a 1/256 chance to fail randomly

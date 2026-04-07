@@ -162,7 +162,7 @@ void CPU::decode_execute(instruction_t instruction){
 
                 case 6: // 0x8XY6 Shift VX 1 bit to the right
                     if (USE_ORIGINAL_SHIFT_BEHAVIOR) regs.at(X) = regs.at(Y);
-                    if(regs.at(X) & 0x00000001) setFlag();
+                    if(regs.at(X) & 0b00000001) setFlag();
                     else resetFlag();
                     regs.at(X) = regs.at(X) >> 1;
                     break;
@@ -171,6 +171,13 @@ void CPU::decode_execute(instruction_t instruction){
                     if(regs.at(X) > regs.at(Y)) resetFlag();
                     else setFlag();
                     regs.at(X) = regs.at(Y) - regs.at(X);
+                    break;
+
+                case 0xE: //0x8XYE Shift VX 1 bit to the left
+                    if (USE_ORIGINAL_SHIFT_BEHAVIOR) regs.at(X) = regs.at(Y);
+                    if(regs.at(X) & 0b10000000) setFlag();
+                    else resetFlag();
+                    regs.at(X) = regs.at(X) << 1;
                     break;
 
                 default:
