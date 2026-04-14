@@ -28,6 +28,7 @@ class MockDisplay : public IDisplay {
 class MockController: public IController {
     public:
         MOCK_METHOD(bool, isPressed, (byte_t key), (override, const));
+        MOCK_METHOD(KEYS, getPressedKey, (), (override, const));
 };
 
 class CPUTest : public Test {
@@ -569,6 +570,26 @@ TEST_F(CPUTest, InstructionFX1EAddVXToIndexRegisterModernBehaviorWorks){
     decode_execute(0xFA1E);
     EXPECT_EQ(getI(), 0x024);
     EXPECT_EQ(regs.at(0xF), 1);
+}
+
+TEST_F(CPUTest, InstructionFX0AAwaitKeyPressWorks){
+    regs.at(0x5) = 0xFF;
+    getPC() = 0x302;
+
+    EXPECT_CALL(controller, getPressedKey()).WillOnce(Return(KEYS::NO_KEY));
+    decode_execute(0xF50A);
+    EXPECT_EQ(getPC(), 0x300);
+    EXPECT_EQ(regs.at(0x5), 0xFF);
+
+    EXPECT_CALL(controller, getPressedKey()).WillOnce(Return(KEYS::KEY_0));
+    decode_execute(0xF50A);
+    EXPECT_EQ(getPC(), 0x300);
+    EXPECT_EQ(regs.at(0x5), 0x00);
+
+    EXPECT_CALL(controller, getPressedKey()).WillOnce(Return(KEYS::KEY_D));
+    decode_execute(0xF50A);
+    EXPECT_EQ(getPC(), 0x300);
+    EXPECT_EQ(regs.at(0x5), 0xD);
 }
 
 // This is commented because it has a 1/256 chance to fail randomly

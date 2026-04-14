@@ -276,6 +276,18 @@ void CPU::decode_execute(instruction_t instruction){
                     I += regs.at(X);
                     break;
 
+                case 0x0A: // 0xFX0A Await key press
+                {
+                    KEYS k = controller.getPressedKey();
+
+                    // Loop this instruction while no keys are pressed
+                    if (k == KEYS::NO_KEY){
+                        PC -= 2;
+                        break;
+                    } else regs.at(X) = k;
+                }
+                break;
+
                 default:
                     throw invalidInstruction(instruction);
                     break;
