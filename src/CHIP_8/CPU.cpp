@@ -306,6 +306,17 @@ void CPU::decode_execute(instruction_t instruction){
                     }
                     break;
 
+                case 0x55: // 0xFX55 Store V0 through VX to [I] through [I+X]
+                    for (uint8_t i = 0; i<=X; i++){
+                        memory.write(I+i, regs.at(i));
+                    }
+                    // Value of I changes in the original behavior
+                    if(USE_LEGACY_BEHAVIOR) I += X+1;
+                    break;
+
+                case 0x65:
+                    break;
+
                 default:
                     throw invalidInstruction(instruction);
                     break;

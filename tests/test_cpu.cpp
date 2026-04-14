@@ -635,6 +635,35 @@ TEST_F(CPUTest, InstructionFX33SaveDecimalValueOfVXToTheTheeNextMemoryAddressesP
     decode_execute(0xF233);
 }
 
+TEST_F(CPUTest, InstructionFX55StoreValuesOfV0ThroughVXToAddressInIndexRegisterLegacyBehaviorWorks){
+    CPU cpu = CPU(ram, display, controller, true);
+    array<byte_t, 16>& regs = getRegs(cpu);
+
+    getI(cpu) = 0x300;
+    regs.at(0) = 0;
+    regs.at(1) = 1;
+    regs.at(2) = 2;
+
+    EXPECT_CALL(ram, write(0x300, 0));
+    EXPECT_CALL(ram, write(0x301, 1));
+    EXPECT_CALL(ram, write(0x302, 2));
+    decode_execute(cpu, 0xF255);
+    EXPECT_EQ(getI(cpu), 0x303);
+}
+
+TEST_F(CPUTest, InstructionFX55StoreValuesOfV0ThroughVXToAddressInIndexRegisterModernBehaviorWorks){
+    getI() = 0x300;
+    regs.at(0) = 0;
+    regs.at(1) = 1;
+    regs.at(2) = 2;
+
+    EXPECT_CALL(ram, write(0x300, 0));
+    EXPECT_CALL(ram, write(0x301, 1));
+    EXPECT_CALL(ram, write(0x302, 2));
+    decode_execute(0xF255);
+    EXPECT_EQ(getI(), 0x300);
+}
+
 // This is commented because it has a 1/256 chance to fail randomly
 // TEST_F(CPUTest, InstructionCXNNGenerateARandomNumberANDItWithNNAndPutTheResultInVXWorks){
 //     decode_execute(0xC0FF);
