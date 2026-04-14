@@ -5,6 +5,7 @@
 #include "commons.hpp"
 #include "IRAM.hpp"
 #include "Idisplay.hpp"
+#include "IController.hpp"
 
 // Forward declaration in case we don't compile with googleTest
 class CPUTest;
@@ -39,7 +40,10 @@ class CPU{
         regs: all 0
         PC: 0x200
         I: 0*/
-        CPU(IRAM& ram, IDisplay& display, bool USE_ORIGINAL_SHIFT_BEHAVIOR = false);
+        CPU(IRAM& ram, 
+            IDisplay& display, 
+            IController& controller,
+            bool USE_ORIGINAL_SHIFT_BEHAVIOR = false);
         
         byte_t memRead (addr_t address) const; // Read byte from RAM address.
         
@@ -57,6 +61,7 @@ class CPU{
     private:
         IRAM& memory; // RAM Memory.
         IDisplay& display; // Display with binary pixel resolution
+        IController& controller; // 16 key controller
         std::array<byte_t, 16> regs; // General purpose registers.
         std::stack<addr_t> stack; // Address stack.
         addr_t PC; // Program Counter register.

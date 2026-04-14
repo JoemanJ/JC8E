@@ -10,6 +10,7 @@ add_library(
     src/CHIP_8/CPU.cpp
     src/CHIP_8/RAM.cpp
     src/CHIP_8/display.cpp
+    src/CHIP_8/controller.cpp
 )
 target_include_directories(Chip8Core PUBLIC include)
 
@@ -37,6 +38,7 @@ add_executable(unit_tests
     tests/test_ram.cpp
     tests/test_cpu.cpp
     tests/test_display.cpp
+    tests/test_controller.cpp
     # Add other test sources here
 )
 

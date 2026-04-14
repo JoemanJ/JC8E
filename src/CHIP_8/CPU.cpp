@@ -4,9 +4,10 @@
 #include "CHIP_8/CPU.hpp"
 
 using namespace std;
-CPU::CPU(IRAM& ram, IDisplay& display, bool USE_LEGACY_BEHAVIOR):
+CPU::CPU(IRAM& ram, IDisplay& display, IController& controller, bool USE_LEGACY_BEHAVIOR):
 memory(ram),
 display(display),
+controller(controller),
 USE_LEGACY_BEHAVIOR(USE_LEGACY_BEHAVIOR)
 {
     // Copy font to memory
@@ -109,14 +110,10 @@ void CPU::decode_execute(instruction_t instruction){
             break;
 
         case 0x5:
-            switch(N){
-                case 0: // 0x5XY0 Skip instruction if VX == VY
-                    if (regs.at(X) == regs.at(Y)) PC += 2;   
-                    break;
-                
-                default:
-                throw invalidInstruction(instruction);
-            }
+            if (N != 0) throw invalidInstruction(instruction);
+            
+            // 0x5XY0 Skip instruction if VX == VY
+            if (regs.at(X) == regs.at(Y)) PC += 2;
             break;
 
         case 0x6: // 0x6XNN Set VX to NN
@@ -186,14 +183,10 @@ void CPU::decode_execute(instruction_t instruction){
             break;
 
         case 0x9:
-            switch(N){
-                case 0: // 0x9XY0 Skip instruction if VX != VY
-                    if (regs.at(X) != regs.at(Y)) PC += 2;   
-                    break;
-                
-                default:
-                throw invalidInstruction(instruction);
-            }
+            if (N != 0) throw invalidInstruction(instruction);
+
+            // 0x9XY0 Skip instruction if VX != VY
+            if (regs.at(X) != regs.at(Y)) PC += 2;
             break;
 
         case 0xA: // 0xANNN Set index register to NNN 
@@ -243,6 +236,19 @@ void CPU::decode_execute(instruction_t instruction){
                 }
             }
             break;
+
+        case 0xE:
+            switch(NN){
+                case 0x9E:
+                    break;
+
+                case 0xA1:
+                    break;
+
+                default:
+                    throw invalidInstruction(instruction);
+            }
+
 
         default:
             throw invalidInstruction(instruction);            

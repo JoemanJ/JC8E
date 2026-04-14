@@ -25,10 +25,16 @@ class MockDisplay : public IDisplay {
         MOCK_METHOD(const pixel_t, getPixel, (byte_t x, byte_t y), (override, const));
 };
 
+class MockController: public IController {
+    public:
+        MOCK_METHOD(bool, isPressed, (byte_t key), (override, const));
+};
+
 class CPUTest : public Test {
     protected:
         NiceMock<MockRAM> ram;
         NiceMock<MockDisplay> display;
+        NiceMock<MockController> controller;
         CPU cpu;
         array<byte_t, 16>& regs;
 
@@ -40,7 +46,7 @@ class CPUTest : public Test {
         addr_t& getI(){return cpu.I;}
     
     public:
-        CPUTest(): ram(), display(), cpu(ram, display), regs(getRegs()){}
+        CPUTest(): ram(), display(), controller(), cpu(ram, display, controller), regs(getRegs()){}
         
         // Public functions that expose the CPU's private functions
         void stackPush(addr_t address){cpu.stackPush(address);};
@@ -77,7 +83,7 @@ TEST_F(CPUTest, RAMIsAllZeroesUpTo0x50){
 
 TEST_F(CPUTest, CPUWritesStandartFontToRAMOnInitialization){
     EXPECT_CALL(ram, bulkWrite);
-    CPU cpu_ = CPU(ram, display);
+    CPU cpu_ = CPU(ram, display, controller);
 }
 
 TEST_F(CPUTest, CPUCanWriteAndReadFromRAM){
@@ -334,7 +340,7 @@ TEST_F(CPUTest, Instruction8XY6ShiftVXRightModernBehaviorWorks){
 }
 
 TEST_F(CPUTest, Instruction8XY6ShiftVXRightLegacyBehaviorWorks){
-    CPU cpu(ram, display, true);
+    CPU cpu(ram, display, controller, true);
     std::array<byte_t, 16>& regs = getRegs(cpu);
 
     regs.at(0x1) = 1 << 7;
@@ -373,7 +379,7 @@ TEST_F(CPUTest, Instruction8XYEShiftVXLeftModernBehaviorWorks){
 }
 
 TEST_F(CPUTest, Instruction8XY6ShiftVXLeftLegacyBehaviorWorks){
-    CPU cpu(ram, display, true);
+    CPU cpu(ram, display, controller, true);
     std::array<byte_t, 16>& regs = getRegs(cpu);
     
     regs.at(0x1) = 1;
@@ -403,7 +409,7 @@ TEST_F(CPUTest, InstructionANNNSetIndexRegisterToNNNWorks){
 }
 
 TEST_F(CPUTest, InstructionBNNNJumpWithOffsetLegacyBehaviorWorks){
-    CPU cpu(ram, display, true);
+    CPU cpu(ram, display, controller, true);
     array<byte_t, 16>& regs = getRegs(cpu);
     
     regs.at(0x0) = 1;
