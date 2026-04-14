@@ -664,6 +664,35 @@ TEST_F(CPUTest, InstructionFX55StoreValuesOfV0ThroughVXToAddressInIndexRegisterM
     EXPECT_EQ(getI(), 0x300);
 }
 
+TEST_F(CPUTest, InstructionFX65LoadValuesFromAddressPointedToByIndexRegisterToRegistersV0ThroughVXLegacyBehaviorWorks){
+    CPU cpu = CPU(ram, display, controller, true);
+    array<byte_t, 16>& regs = getRegs(cpu);
+
+    getI(cpu) = 0x300;
+    
+    EXPECT_CALL(ram, read(0x300)).WillOnce(Return(0xA));
+    EXPECT_CALL(ram, read(0x301)).WillOnce(Return(0xB));
+    EXPECT_CALL(ram, read(0x302)).WillOnce(Return(0xC));
+    decode_execute(cpu, 0xF265);
+    EXPECT_EQ(regs.at(0), 0xA);
+    EXPECT_EQ(regs.at(1), 0xB);
+    EXPECT_EQ(regs.at(2), 0xC);
+    EXPECT_EQ(getI(cpu), 0x303);
+}
+
+TEST_F(CPUTest, InstructionFX65LoadValuesFromAddressPointedToByIndexRegisterToRegistersV0ThroughVXModernBehaviorWorks){
+    getI() = 0x300;
+    
+    EXPECT_CALL(ram, read(0x300)).WillOnce(Return(0xA));
+    EXPECT_CALL(ram, read(0x301)).WillOnce(Return(0xB));
+    EXPECT_CALL(ram, read(0x302)).WillOnce(Return(0xC));
+    decode_execute(0xF265);
+    EXPECT_EQ(regs.at(0), 0xA);
+    EXPECT_EQ(regs.at(1), 0xB);
+    EXPECT_EQ(regs.at(2), 0xC);
+    EXPECT_EQ(getI(cpu), 0x300);
+}
+
 // This is commented because it has a 1/256 chance to fail randomly
 // TEST_F(CPUTest, InstructionCXNNGenerateARandomNumberANDItWithNNAndPutTheResultInVXWorks){
 //     decode_execute(0xC0FF);
