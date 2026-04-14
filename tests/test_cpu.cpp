@@ -44,6 +44,8 @@ class CPUTest : public Test {
         stack<addr_t>& getStack(){return cpu.stack;}
         addr_t& getPC(){return cpu.PC;}
         addr_t& getI(){return cpu.I;}
+        byte_t& getDelayTimer(){return cpu.delayTimer;}
+        byte_t& getSoundTimer(){return cpu.soundTimer;}
     
     public:
         CPUTest(): ram(), display(), controller(), cpu(ram, display, controller), regs(getRegs()){}
@@ -52,9 +54,6 @@ class CPUTest : public Test {
         void stackPush(addr_t address){cpu.stackPush(address);};
         addr_t stackPop(){return cpu.stackPop();};
         void memWrite(addr_t address, byte_t value){cpu.memWrite(address, value);}
-        void regWrite(uint8_t reg, byte_t value){cpu.regWrite(reg, value);}
-        void regWrite(char reg, byte_t value){cpu.regWrite(reg, value);}
-        void IWrite(addr_t value){cpu.IWrite(value);}
         instruction_t fetch(){return cpu.fetch();}
         void decode_execute(instruction_t instruction){cpu.decode_execute(instruction);}
         void decode_execute(CPU& cpu, instruction_t instruction){cpu.decode_execute(instruction);}
@@ -520,6 +519,24 @@ TEST_F(CPUTest, InstructionEXA1SkipInstructionIfKeyXIsNotPressedWorks){
     EXPECT_CALL(controller, isPressed(0x8)).WillOnce(Return(true));
     decode_execute(0xE8A1);
     EXPECT_EQ(cpu.PCRead(), 0x502);
+}
+
+TEST_F(CPUTest, InstructionFX07SetVXToTheValueOfDelayTimerWorks){
+    getDelayTimer() = 0xAB;
+    decode_execute(0xF507);
+    EXPECT_EQ(regs.at(0x5), 0xAB);
+}
+
+TEST_F(CPUTest, InstructionFX15SetDelayTimerToTheValueOfVXWorks){
+    regs.at(0x5) = 0xAB;
+    decode_execute(0xF515);
+    EXPECT_EQ(getDelayTimer(), 0xAB);
+}
+
+TEST_F(CPUTest, InstructionFX18SetSoundTimerToTheValueOfVXWorks){
+    regs.at(0x5) = 0xAB;
+    decode_execute(0xF518);
+    EXPECT_EQ(getSoundTimer(), 0xAB);
 }
 
 // This is commented because it has a 1/256 chance to fail randomly

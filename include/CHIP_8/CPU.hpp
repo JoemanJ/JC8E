@@ -47,12 +47,12 @@ class CPU{
         
         byte_t memRead (addr_t address) const; // Read byte from RAM address.
         
-        /* Reads value from a general purpose register.
-        Valid values for reg are 0 to 15. */
-        byte_t regRead(addr_t reg) const;
-        /* Reads value from a general purpose register.
-        Valid values for reg are '0' to '9' and 'A' to 'F' */
-        byte_t regRead(char reg) const;
+        // /* Reads value from a general purpose register.
+        // Valid values for reg are 0 to 15. */
+        // byte_t regRead(addr_t reg) const;
+        // /* Reads value from a general purpose register.
+        // Valid values for reg are '0' to '9' and 'A' to 'F' */
+        // byte_t regRead(char reg) const;
         
         addr_t IRead() const {return I;} // Reads value from index register.
         
@@ -66,8 +66,8 @@ class CPU{
         std::stack<addr_t> stack; // Address stack.
         addr_t PC; // Program Counter register.
         addr_t I; // Index Register.
-        // byte_t delay_timer; // Delay Timer.
-        // byte_t sound_timer; // Sound Timer.
+        byte_t delayTimer; // Delay Timer.
+        byte_t soundTimer; // Sound Timer.
         
         std::mt19937 RNG; // Random Number Generator
 
@@ -91,14 +91,14 @@ class CPU{
         
         void memWrite(addr_t address, byte_t value); // Write byte do RAM.
         
-        /* Writes value to a general purpose register.
-        Valid values for reg are 0 to 15. */
-        void regWrite(uint8_t reg, byte_t value);
-        /* Writes value to a general purpose register.
-        Valid values for reg are '0' to '9' and 'A' to 'F'. */
-        void regWrite(char reg, byte_t value);
+        // /* Writes value to a general purpose register.
+        // Valid values for reg are 0 to 15. */
+        // void regWrite(uint8_t reg, byte_t value);
+        // /* Writes value to a general purpose register.
+        // Valid values for reg are '0' to '9' and 'A' to 'F'. */
+        // void regWrite(char reg, byte_t value);
         
-        void IWrite(addr_t value); // Writes value to index register.
+        // void IWrite(addr_t value); // Writes value to index register.
 
         /* Fetches next 16-bit instruction (from PC and PC+1) and updates PC */
         instruction_t fetch();

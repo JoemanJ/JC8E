@@ -252,6 +252,26 @@ void CPU::decode_execute(instruction_t instruction){
             }
             break;
 
+        case 0xF:
+            switch(NN){
+                case 0x07:
+                    regs.at(X) = delayTimer;
+                    break;
+
+                case 0x15:
+                    delayTimer = regs.at(X);
+                    break;
+
+                case 0x18:
+                    soundTimer = regs.at(X);
+                    break;
+
+                default:
+                    throw invalidInstruction(instruction);
+                    break;
+            }
+            break;
+
         default:
             throw invalidInstruction(instruction);            
     }
