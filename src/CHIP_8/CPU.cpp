@@ -213,6 +213,37 @@ void CPU::decode_execute(instruction_t instruction){
             break;
         }
 
+        /*
+            0xDXYN draw an N pixels tall sprite pointed to by the Index register,
+            at coordinates (VX, VY) to the screen.
+            1 on the sprite means the pixel is toggled.
+            0 on the sprite means the pixel is not toggled.
+            The starting value of VX wraps around the screen, the sprite does not.
+            if any pixels go from 1 to 0, VF is set, otherwise it is reset.
+        */
+        case 0xD: 
+            {
+                byte_t displayHeight = display.getHeight();
+                byte_t displayWidth = display.getWidth();
+                byte_t startX = regs.at(X) % display.getWidth();
+                byte_t startY = regs.at(Y) % display.getHeight();
+                resetFlag();
+
+                for(byte_t i = 0; i<N && startY+i < displayHeight; i++){ // for each line in the sprite
+                    byte_t spriteLine = memory.read(I+i);
+                    // IDISPLAY VAI PRECISAR DE UMA FUNÇÃO GETPIXEL
+                    for (byte_t j=0; j<8 && startX+j < displayWidth; j++){
+                        if (spriteLine & (0b10000000 >> j)){
+                            byte_t x = startX + j;
+                            byte_t y = startY + i;
+                            if (display.getPixel(x, y)) setFlag(); // collision
+                            display.togglePixel(x, y);
+                        }
+                    }
+                }
+            }
+            break;
+
         default:
             throw invalidInstruction(instruction);            
     }

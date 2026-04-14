@@ -7,6 +7,7 @@
 #include "commons.hpp"
 
 using namespace std;
+using namespace testing;
 
 class MockRAM : public IRAM {
     public:
@@ -19,12 +20,15 @@ class MockDisplay : public IDisplay {
     public:
         MOCK_METHOD(void, togglePixel, (byte_t x, byte_t y), (override));
         MOCK_METHOD(void, clear, (), (override));
+        MOCK_METHOD(const byte_t, getWidth, (), (override, const));
+        MOCK_METHOD(const byte_t, getHeight, (), (override, const));
+        MOCK_METHOD(const pixel_t, getPixel, (byte_t x, byte_t y), (override, const));
 };
 
-class CPUTest : public testing::Test {
+class CPUTest : public Test {
     protected:
-        testing::NiceMock<MockRAM> ram;
-        testing::NiceMock<MockDisplay> display;
+        NiceMock<MockRAM> ram;
+        NiceMock<MockDisplay> display;
         CPU cpu;
         array<byte_t, 16>& regs;
 
@@ -425,6 +429,63 @@ TEST_F(CPUTest, InstructionBNNNJumpWithOffsetModernBehaviorWorks){
     EXPECT_EQ(cpu.PCRead(), 0x0BD0);
     decode_execute(0xB000);
     EXPECT_EQ(cpu.PCRead(), 0x0001);
+}
+
+TEST_F(CPUTest, InstructionDXYNDrawNPixelsTallSpritePointedToByIndexRegisterWorks){
+    regs.at(0xA) = 10;
+    regs.at(0xB) = 20;
+    getI() = 0x500;
+    ASSERT_EQ(cpu.IRead(), 0x500);
+
+    EXPECT_CALL(display, getWidth()).WillRepeatedly(Return(64));
+    EXPECT_CALL(display, getHeight()).WillRepeatedly(Return(32));
+
+    // Toggle a single pixel
+    EXPECT_CALL(ram, read(0x500)).WillOnce(Return(0b10000000));
+    EXPECT_CALL(display, togglePixel(10, 20)).Times(1);
+    decode_execute(0xDAB1);
+    EXPECT_EQ(regs.at(0xF), 0);
+    
+    // Toggle several pixels
+    regs.at(0xA) = 0;
+    regs.at(0xB) = 10;
+    getI() = 0xA00;
+    EXPECT_CALL(ram, read(0xA00)).WillOnce(Return(0b11111111));
+    EXPECT_CALL(display, togglePixel).Times(8);
+    decode_execute(0xDAB1);
+    EXPECT_EQ(regs.at(0xF), 0);
+
+    // Collision (toggle a pixel that is already on)
+    EXPECT_CALL(ram, read(0xA00)).WillOnce(Return(0b11111111));
+    EXPECT_CALL(display, getPixel).Times(8).WillRepeatedly(Return(0xFF));
+    EXPECT_CALL(display, togglePixel).Times(8);
+    decode_execute(0xDBA1);
+    EXPECT_EQ(regs.at(0xF), 1);
+
+    // Sprites with multiple lines (N>1)
+    EXPECT_CALL(ram, read(0xA00)).WillOnce(Return(0b11111111));
+    EXPECT_CALL(ram, read(0xA01)).WillOnce(Return(0b11111111));
+    EXPECT_CALL(display, getPixel).Times(16).WillRepeatedly(Return(0x00));
+    EXPECT_CALL(display, togglePixel).Times(16);
+    decode_execute(0xDAB2);
+    EXPECT_EQ(regs.at(0xF), 0);
+
+    // Wrap starting X and Y
+    regs.at(0xA) = 64;
+    regs.at(0xB) = 32;
+    getI() = 0x123;
+    EXPECT_CALL(ram, read(0x123)).WillOnce(Return(0b10000000));
+    EXPECT_CALL(display, getPixel).WillOnce(Return(0xFF)).WillRepeatedly(Return(0xFF));
+    EXPECT_CALL(display, togglePixel(0,0)).Times(1);
+    decode_execute(0xDAB1);
+
+    // Do not wrap sprite
+    regs.at(0xA) = 63;
+    regs.at(0xB) = 31;
+    EXPECT_CALL(ram, read(0x123)).WillOnce(Return(0b11111111));
+    EXPECT_CALL(display, getPixel).Times(1).WillOnce(Return(0x00));
+    EXPECT_CALL(display, togglePixel).Times(1);
+    decode_execute(0xDABF);
 }
 
 // This is commented because it has a 1/256 chance to fail randomly

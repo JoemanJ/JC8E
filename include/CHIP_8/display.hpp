@@ -1,5 +1,5 @@
 #pragma once
-#include <array>
+#include <vector>
 #include "commons.hpp"
 #include "Idisplay.hpp"
 
@@ -11,23 +11,35 @@ class Display : public IDisplay{
     friend class DisplayTest;
 
     private:
-        std::array<byte_t, SCREEN_SIZE> buffer;
-    
+        std::vector<pixel_t> buffer;
+
+        uint16_t width;
+        uint16_t height;    
     public:
         // Initializes a completely black display
-        Display();
+        Display(uint8_t width = SCREEN_WIDTH, uint8_t height = SCREEN_HEIGHT);
+
+        // Returns the display's width
+        const byte_t getWidth() const {return width;}
+        
+        // Returns the display's width
+        const byte_t getHeight() const {return height;}
+
+        const pixel_t getPixel(byte_t x, byte_t y) const {return buffer[width*y + x];} 
 
         // If the pixel on position (x,y) is on: turn it off. Otherwise, turn it on.
         void togglePixel(byte_t x, byte_t y) override {
-            buffer[y*SCREEN_WIDTH + x] = ~buffer[y*SCREEN_WIDTH+x];
+            pixel_t& p = buffer.at(y*width + x);
+            p = ~p;
         }
         /*
         If the pixel on position (index%SCREEN_WIDTH, index//SCREEN_WIDTH) is on:
         turn it off. Otherwise, turn it on.
         */
        void togglePixel(uint16_t index){
-            buffer[index] = ~buffer[index];
+            pixel_t& p = buffer.at(index);
+            p = ~p;
        }
 
-       void clear(){buffer.fill(0x00);}
+       void clear();
 };
