@@ -494,6 +494,34 @@ TEST_F(CPUTest, InstructionDXYNDrawNPixelsTallSpritePointedToByIndexRegisterWork
     decode_execute(0xDABF);
 }
 
+TEST_F(CPUTest, InstructionEX9ESkipInstructionIfKeyXIsPressedWorks){
+    getPC() = 0x500;
+    regs.at(0x0) = 0;
+    regs.at(0x8) = 8;
+
+    EXPECT_CALL(controller, isPressed(0x0)).WillOnce(Return(false));
+    decode_execute(0xE09E);
+    EXPECT_EQ(cpu.PCRead(), 0x500);
+
+    EXPECT_CALL(controller, isPressed(0x8)).WillOnce(Return(true));
+    decode_execute(0xE89E);
+    EXPECT_EQ(cpu.PCRead(), 0x502);
+}
+
+TEST_F(CPUTest, InstructionEXA1SkipInstructionIfKeyXIsNotPressedWorks){
+    getPC() = 0x500;
+    regs.at(0x0) = 0;
+    regs.at(0x8) = 8;
+
+    EXPECT_CALL(controller, isPressed(0x0)).WillOnce(Return(false));
+    decode_execute(0xE0A1);
+    EXPECT_EQ(cpu.PCRead(), 0x502);
+
+    EXPECT_CALL(controller, isPressed(0x8)).WillOnce(Return(true));
+    decode_execute(0xE8A1);
+    EXPECT_EQ(cpu.PCRead(), 0x502);
+}
+
 // This is commented because it has a 1/256 chance to fail randomly
 // TEST_F(CPUTest, InstructionCXNNGenerateARandomNumberANDItWithNNAndPutTheResultInVXWorks){
 //     decode_execute(0xC0FF);

@@ -240,15 +240,17 @@ void CPU::decode_execute(instruction_t instruction){
         case 0xE:
             switch(NN){
                 case 0x9E:
+                    if (controller.isPressed(regs.at(X))) PC += 2;
                     break;
 
                 case 0xA1:
+                    if (!controller.isPressed(regs.at(X))) PC += 2;
                     break;
 
                 default:
                     throw invalidInstruction(instruction);
             }
-
+            break;
 
         default:
             throw invalidInstruction(instruction);            
