@@ -611,6 +611,30 @@ TEST_F(CPUTest, InstructionFX29SetIndexRegisterToAddressOfFontCharacterInVXWorks
     EXPECT_EQ(getI(), 0x50+(5*0x1));
 }
 
+TEST_F(CPUTest, InstructionFX33SaveDecimalValueOfVXToTheTheeNextMemoryAddressesPointedToByIWorks){
+    regs.at(0x0) = 000;
+    regs.at(0x1) = 123;
+    regs.at(0x2) = 255;
+    getI() = 0x200;
+
+    EXPECT_CALL(ram, write(0x200, 0));
+    EXPECT_CALL(ram, write(0x201, 0));
+    EXPECT_CALL(ram, write(0x202, 0));
+    decode_execute(0xF033);
+
+    getI() = 0x300;
+    EXPECT_CALL(ram, write(0x300, 1));
+    EXPECT_CALL(ram, write(0x301, 2));
+    EXPECT_CALL(ram, write(0x302, 3));
+    decode_execute(0xF133);
+
+    getI() = 0x800;
+    EXPECT_CALL(ram, write(0x800, 2));
+    EXPECT_CALL(ram, write(0x801, 5));
+    EXPECT_CALL(ram, write(0x802, 5));
+    decode_execute(0xF233);
+}
+
 // This is commented because it has a 1/256 chance to fail randomly
 // TEST_F(CPUTest, InstructionCXNNGenerateARandomNumberANDItWithNNAndPutTheResultInVXWorks){
 //     decode_execute(0xC0FF);

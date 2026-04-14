@@ -288,8 +288,22 @@ void CPU::decode_execute(instruction_t instruction){
                 }
                 break;
 
-                case 0x29:
+                case 0x29: // 0xFX29 Set I to address of font character VX
                     I = 0x50 + (regs.at(X)&0x0F)*5;
+                    break;
+
+                case 0x33: // 0xFX33 Save digits of VX to addresses pointed to by I
+                    {
+                        byte_t value, d1, d2, d3;
+                        value = regs.at(X);
+                        d1 = value / 100; // Whole division
+                        d2 = (value % 100) / 10; // Whole division
+                        d3 = value % 10;
+                        
+                        memory.write(I, d1);
+                        memory.write(I+1, d2);
+                        memory.write(I+2, d3);
+                    }
                     break;
 
                 default:
