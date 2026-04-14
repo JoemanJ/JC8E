@@ -239,11 +239,11 @@ void CPU::decode_execute(instruction_t instruction){
 
         case 0xE:
             switch(NN){
-                case 0x9E:
+                case 0x9E: // 0xEX9E Skip next instruction if key VX is pressed
                     if (controller.isPressed(regs.at(X))) PC += 2;
                     break;
 
-                case 0xA1:
+                case 0xA1: // 0xEX9E Skip next instruction if key VX is not pressed
                     if (!controller.isPressed(regs.at(X))) PC += 2;
                     break;
 
@@ -254,16 +254,26 @@ void CPU::decode_execute(instruction_t instruction){
 
         case 0xF:
             switch(NN){
-                case 0x07:
+                case 0x07: // 0xFX07 Set VX to the value of delay timer
                     regs.at(X) = delayTimer;
                     break;
 
-                case 0x15:
+                case 0x15: // 0xFX15 Set delay timer to the value of VX
                     delayTimer = regs.at(X);
                     break;
 
-                case 0x18:
+                case 0x18: // 0xF18 Set sound timer to the value of VX
                     soundTimer = regs.at(X);
+                    break;
+
+                case 0x1E: // 0xF1E I += VX
+                    // Set VF on "overflow" above 0xFFF on modern behavior
+                    if(!USE_LEGACY_BEHAVIOR){
+                        if (I + regs.at(X) > 0xFFF) setFlag();
+                        else resetFlag();
+                    }
+
+                    I += regs.at(X);
                     break;
 
                 default:
@@ -275,4 +285,8 @@ void CPU::decode_execute(instruction_t instruction){
         default:
             throw invalidInstruction(instruction);            
     }
+
+    // We only ever care about the lower 12 bits of these registers
+    I &= 0x0FFF;
+    PC &= 0x0FFF;
 }

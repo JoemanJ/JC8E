@@ -72,16 +72,18 @@ class CPU{
         std::mt19937 RNG; // Random Number Generator
 
         /*
-            Defines the behavior of the shift (0XY6 and 0XYE) and jump with
-            offset (BNNN) instructions.
+            Defines the behavior of the some instructions.
             If set to false (default):
             - Shift instructions will just shift the value of VX left or right.
             - Jump with offset (instruction BXNN) will jump to address XNN + VX.
+            - Add to Index (instruction FX1E) will not affect VF
 
             If set to true:
             - Shift instructions will first but the value of VY into VX, and 
             then shift the value of VX left or right.
             - Jump with offset (instruction BNNN) will jump to address NNN + V0.
+            - Add to Index (instruction FX1E) will set VF to 1 if the value of
+            the index register "overflows" to 0x1000 or greater
 
         */
         bool USE_LEGACY_BEHAVIOR = false; 

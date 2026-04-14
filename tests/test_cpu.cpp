@@ -44,6 +44,7 @@ class CPUTest : public Test {
         stack<addr_t>& getStack(){return cpu.stack;}
         addr_t& getPC(){return cpu.PC;}
         addr_t& getI(){return cpu.I;}
+        addr_t& getI(CPU& cpu){return cpu.I;}
         byte_t& getDelayTimer(){return cpu.delayTimer;}
         byte_t& getSoundTimer(){return cpu.soundTimer;}
     
@@ -415,7 +416,7 @@ TEST_F(CPUTest, InstructionBNNNJumpWithOffsetLegacyBehaviorWorks){
     decode_execute(cpu, 0xB123);
     EXPECT_EQ(cpu.PCRead(), 0x0124);
     decode_execute(cpu, 0xBFFF);
-    EXPECT_EQ(cpu.PCRead(), 0x1000);
+    EXPECT_EQ(cpu.PCRead(), 0x0000);
     decode_execute(cpu, 0xBBCD);
     EXPECT_EQ(cpu.PCRead(), 0x0BCE);
     decode_execute(cpu, 0xB000);
@@ -537,6 +538,37 @@ TEST_F(CPUTest, InstructionFX18SetSoundTimerToTheValueOfVXWorks){
     regs.at(0x5) = 0xAB;
     decode_execute(0xF518);
     EXPECT_EQ(getSoundTimer(), 0xAB);
+}
+
+TEST_F(CPUTest, InstructionFX1EAddVXToIndexRegisterLegacyBehaviorWorks){
+    CPU cpu = CPU(ram, display, controller, true);
+    array<byte_t, 16>& regs = getRegs(cpu);
+
+    getI(cpu) = 0x300;
+    regs.at(0xA) = 0x25;
+
+    decode_execute(cpu, 0xFA1E);
+    EXPECT_EQ(getI(cpu), 0x325);
+    EXPECT_EQ(regs.at(0xF), 0);
+
+    getI(cpu) = 0xFFF;
+    decode_execute(cpu, 0xFA1E);
+    EXPECT_EQ(getI(cpu), 0x024);
+    EXPECT_EQ(regs.at(0xF), 0);
+}
+
+TEST_F(CPUTest, InstructionFX1EAddVXToIndexRegisterModernBehaviorWorks){
+    getI() = 0x300;
+    regs.at(0xA) = 0x25;
+
+    decode_execute(0xFA1E);
+    EXPECT_EQ(getI(), 0x325);
+    EXPECT_EQ(regs.at(0xF), 0);
+
+    getI() = 0xFFF;
+    decode_execute(0xFA1E);
+    EXPECT_EQ(getI(), 0x024);
+    EXPECT_EQ(regs.at(0xF), 1);
 }
 
 // This is commented because it has a 1/256 chance to fail randomly
