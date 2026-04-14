@@ -288,6 +288,10 @@ void CPU::decode_execute(instruction_t instruction){
                 }
                 break;
 
+                case 0x29:
+                    I = 0x50 + regs.at(X)*5;
+                    break;
+
                 default:
                     throw invalidInstruction(instruction);
                     break;

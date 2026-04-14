@@ -592,6 +592,25 @@ TEST_F(CPUTest, InstructionFX0AAwaitKeyPressWorks){
     EXPECT_EQ(regs.at(0x5), 0xD);
 }
 
+TEST_F(CPUTest, InstructionFX29SetIndexRegisterToAddressOfFontCharacterInVXWorks){
+    regs.at(0x0) = 0x0;
+    regs.at(0x5) = 0x5;
+    regs.at(0xA) = 0xA;
+    regs.at(0xF) = 0xF;
+    regs.at(0x7) = 0x1;
+
+    decode_execute(0xF029);
+    EXPECT_EQ(getI(), 0x50+(5*0x0));
+    decode_execute(0xF529);
+    EXPECT_EQ(getI(), 0x50+(5*0x5));
+    decode_execute(0xFA29);
+    EXPECT_EQ(getI(), 0x50+(5*0xA));
+    decode_execute(0xFF29);
+    EXPECT_EQ(getI(), 0x50+(5*0xF));
+    decode_execute(0xF729);
+    EXPECT_EQ(getI(), 0x50+(5*0x1));
+}
+
 // This is commented because it has a 1/256 chance to fail randomly
 // TEST_F(CPUTest, InstructionCXNNGenerateARandomNumberANDItWithNNAndPutTheResultInVXWorks){
 //     decode_execute(0xC0FF);
