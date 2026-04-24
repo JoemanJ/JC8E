@@ -102,6 +102,42 @@ TEST_F(CPUTest, FetchIncrementsPCBy2Bytes){
     EXPECT_EQ(cpu.PCRead(), 0x0202);
 }
 
+TEST_F(CPUTest, StepExecutesAFetchDecodeExecuteCycle){
+    getI() = 0x200;
+    // We'll try to execute instruction 7ABC (Add 0xBC to VA)
+    EXPECT_CALL(ram, read(0x200)).WillOnce(Return(0x7A));
+    EXPECT_CALL(ram, read(0x201)).WillOnce(Return(0xBC));
+    cpu.step();
+    EXPECT_EQ(cpu.PCRead(), 0x202);
+    EXPECT_EQ(regs.at(0xA), 0xBC);
+}
+
+TEST_F(CPUTest, DecTimersDecreasesDelayTimerAndSoundTimer){
+    getDelayTimer() = 10;
+    getSoundTimer() = 20;
+
+    cpu.decTimers();
+    EXPECT_EQ(getDelayTimer(), 9);
+    EXPECT_EQ(getSoundTimer(), 19);
+}
+
+TEST_F(CPUTest, DecTimersDoesNotUnderflowTimers){
+    getDelayTimer() = 1;
+    getSoundTimer() = 2;
+
+    cpu.decTimers();
+    EXPECT_EQ(getDelayTimer(), 0);
+    EXPECT_EQ(getSoundTimer(), 1);
+
+    cpu.decTimers();
+    EXPECT_EQ(getDelayTimer(), 0);
+    EXPECT_EQ(getSoundTimer(), 0);
+
+    cpu.decTimers();
+    EXPECT_EQ(getDelayTimer(), 0);
+    EXPECT_EQ(getSoundTimer(), 0);
+}
+
 TEST_F(CPUTest, Instruction00E0ClearScreenCallsDisplayClear){
     EXPECT_CALL(display, clear()).Times(1);
     

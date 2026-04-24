@@ -66,6 +66,15 @@ inline void CPU::resetFlag(){
     regs.at(0xF) = 0;
 }
 
+void CPU::decTimers(){
+    if (soundTimer) soundTimer--;
+    if (delayTimer) delayTimer--;
+}
+
+void CPU::step(){
+    decode_execute(fetch());
+}
+
 void CPU::decode_execute(instruction_t instruction){
     // Separate instruction into pieces
     instruction_t TYPE, X, Y, N, NN, NNN;

@@ -57,6 +57,10 @@ class CPU{
         addr_t IRead() const {return I;} // Reads value from index register.
         
         addr_t PCRead() const {return PC;} // Reads value from PC register.
+
+        void step(); // Executes one fetch-decode-execute cycle
+
+        void decTimers(); // Decreases delayTimer and soundTimer
         
     private:
         IRAM& memory; // RAM Memory.

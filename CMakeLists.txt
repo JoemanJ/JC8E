@@ -11,6 +11,7 @@ add_library(
     src/CHIP_8/RAM.cpp
     src/CHIP_8/display.cpp
     src/CHIP_8/controller.cpp
+    src/emulation/emulator.cpp
 )
 target_include_directories(Chip8Core PUBLIC include)
 
