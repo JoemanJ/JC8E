@@ -35,3 +35,7 @@ void Emulator::processTime(){
 vector<pixel_t> Emulator::getDisplayPixels() const{
     return display.getPixels();
 }
+
+Emulator::~Emulator(){
+    delete cpu;
+}
