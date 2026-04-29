@@ -11,9 +11,15 @@ add_library(
     src/CHIP_8/RAM.cpp
     src/CHIP_8/display.cpp
     src/CHIP_8/controller.cpp
-    src/emulation/emulator.cpp
 )
 target_include_directories(Chip8Core PUBLIC include)
+
+add_library(
+    Emulation
+    src/emulation/emulator.cpp
+    src/emulation/renderer.cpp
+)
+target_include_directories(Emulation PUBLIC include)
 
 include(FetchContent)
 # SFML 2.6.2
@@ -56,5 +62,6 @@ add_executable(JC8E
 
 target_link_libraries(JC8E
     Chip8Core
+    Emulation
     sfml-graphics
 )

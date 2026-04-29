@@ -2,8 +2,6 @@
 #include <inttypes.h>
 #include <commons.hpp>
 
-typedef uint8_t pixel_t;
-
 class IDisplay{
     public:
         virtual ~IDisplay() = default;

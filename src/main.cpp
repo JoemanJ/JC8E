@@ -5,16 +5,12 @@
 #include <CHIP_8/controller.hpp>
 #include <CHIP_8/display.hpp>
 #include <emulation/emulator.hpp>
+#include <emulation/renderer.hpp>
 
 int main(int argc, char** argv)
 {
-    // Setup CPU
-    RAM ram = RAM();
-    Display display = Display(SCREEN_WIDTH, SCREEN_HEIGHT);
-    Controller controller = Controller();
-    CPU cpu = CPU(ram, display, controller);
-
-    Emulator emulator(cpu, ram, display);
+    Emulator emulator = Emulator();
+    Renderer renderer = Renderer(64, 32, 10.0f);
 
     sf::RenderWindow window(sf::VideoMode(640,320), "JC8E");
 
@@ -31,6 +27,8 @@ int main(int argc, char** argv)
         // Frame pipeline
         window.clear(sf::Color::Black);
         // Draw stuff...
+        renderer.update(emulator.getDisplayPixels());
+        renderer.draw(window);
         window.display();
     }
 

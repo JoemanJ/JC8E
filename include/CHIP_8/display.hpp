@@ -41,5 +41,9 @@ class Display : public IDisplay{
             p = ~p;
        }
 
+       // Turns every píxel of the display black
        void clear();
+
+       // Returns a vector with all pixels on the screen
+       const std::vector<pixel_t>& getPixels() const {return buffer;} 
 };
