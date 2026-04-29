@@ -20,6 +20,11 @@ add_library(
     src/emulation/renderer.cpp
 )
 target_include_directories(Emulation PUBLIC include)
+target_link_libraries(
+    Emulation
+    PUBLIC
+        Chip8Core
+)
 
 include(FetchContent)
 # SFML 2.6.2

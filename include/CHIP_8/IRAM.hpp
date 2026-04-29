@@ -15,5 +15,5 @@ class IRAM{
         virtual void bulkWrite(addr_t startAddress, std::size_t size, const byte_t *data) = 0;
 
         // Loads a file from the given path to ram
-        virtual void load(const std::filesystem::path& path);
+        virtual void load(const std::filesystem::path& path) = 0;
 };

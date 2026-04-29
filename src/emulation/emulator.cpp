@@ -36,6 +36,11 @@ vector<pixel_t> Emulator::getDisplayPixels() const{
     return display.getPixels();
 }
 
+void Emulator::load(const std::filesystem::path &path){
+    ram.load(path);
+    unpause();
+}
+
 Emulator::~Emulator(){
     delete cpu;
 }

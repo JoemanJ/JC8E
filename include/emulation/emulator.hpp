@@ -20,6 +20,7 @@ class Emulator {
                 sf::Time CPUInstructionTime = T500Hz,
                 sf::Time CPUTimerTime = T60Hz
             );
+        ~Emulator();
 
         /*
         This function should be called in the main loop.
@@ -39,6 +40,9 @@ class Emulator {
 
         // Resumes emulation
         void unpause() {paused = false;}
+
+        // Loads a rom from the given path
+        virtual void load(const std::filesystem::path& path);
 
     private:
         CPU* cpu;
