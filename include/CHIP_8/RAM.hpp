@@ -10,7 +10,7 @@ class RAM : public IRAM{
         std::array<byte_t, RAM_SIZE> memory;
 
     public:
-        // Initializes memory with all zeros
+        // Reads byte from address
         RAM();
 
         // Reads byte from address
@@ -24,4 +24,7 @@ class RAM : public IRAM{
         
         // Writes a buffer of given size to memory, starting from startAddress
         void bulkWrite(addr_t startAddress, std::size_t size, const byte_t* data);
+
+        // Loads a file from the given path to ram
+        virtual void load(const std::filesystem::path& path);
 };

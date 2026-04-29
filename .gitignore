@@ -1,3 +1,7 @@
 build/
 learning/
 tests/out.txt
+*.xopp
+tests/ROMS/
+lib/
+bin/
