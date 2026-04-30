@@ -5,6 +5,7 @@
 #include "CHIP_8/RAM.hpp"
 #include "CHIP_8/display.hpp"
 #include "commons.hpp"
+#include "filesystem"
 
 using namespace std;
 using namespace testing;
@@ -14,6 +15,7 @@ class MockRAM : public IRAM {
         MOCK_METHOD(void, write, (addr_t address, byte_t value), (override));
         MOCK_METHOD(byte_t, read, (addr_t address), (const, override));
         MOCK_METHOD(void, bulkWrite, (addr_t startAddress, std::size_t size, const byte_t *data), (override));
+        MOCK_METHOD(void, load, (const filesystem::path& path));
 };
 
 class MockDisplay : public IDisplay {
