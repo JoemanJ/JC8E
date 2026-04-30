@@ -7,28 +7,26 @@ Emulator::Emulator(sf::Time CPUInstructionTime, sf::Time CPUTimerTime):
     CPUInstructionTime(CPUInstructionTime),
     CPUTimerTime(CPUTimerTime),
     ram(),
+    cpu(ram, display, controller, false),
     display(64, 32),
     controller(),
-    loopTime(),
     paused(true)
 {
-    cpu = new CPU(ram, display, controller, false);
 }
 
-void Emulator::processTime(){
+void Emulator::processTime(const sf::Time& dt){
     if(paused) return;
 
-    sf::Time dt = loopTime.restart();
     instructionTimeAccumulator += dt;
     timerTimeAccumulator += dt;
 
     while(instructionTimeAccumulator > CPUInstructionTime){
-        cpu->step();
+        cpu.step();
         instructionTimeAccumulator -= CPUInstructionTime;
     }
 
     while(timerTimeAccumulator > CPUTimerTime){
-        cpu->decTimers();
+        cpu.decTimers();
         timerTimeAccumulator -= CPUTimerTime;
     }
 }
@@ -39,8 +37,4 @@ vector<pixel_t> Emulator::getDisplayPixels() const{
 void Emulator::load(const std::filesystem::path &path){
     ram.load(path);
     unpause();
-}
-
-Emulator::~Emulator(){
-    delete cpu;
 }

@@ -10,6 +10,7 @@
     Class that encapsulates the emulator core and execution logic.
 */
 class Emulator {
+    friend class EmulatorTest;
     public:
     
         /*
@@ -20,14 +21,13 @@ class Emulator {
                 sf::Time CPUInstructionTime = T500Hz,
                 sf::Time CPUTimerTime = T60Hz
             );
-        ~Emulator();
 
         /*
         This function should be called in the main loop.
         This will run CPU instructions and decrement CPU timers according to
         elapsed time since the last iteration.
         */
-        void processTime();
+        void processTime(const sf::Time& dt);
 
         /*
         Returns an array of 64*32 bytes representing each pixel on the display.
@@ -45,14 +45,13 @@ class Emulator {
         virtual void load(const std::filesystem::path& path);
 
     private:
-        CPU* cpu;
         RAM ram;
         Display display;
         Controller controller;
+        CPU cpu;
         
         bool paused;
 
-        sf::Clock loopTime;
         sf::Time CPUInstructionTime;
         sf::Time CPUTimerTime;
         
