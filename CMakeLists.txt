@@ -4,7 +4,7 @@ project(JC8E LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# My libraries
+### My libraries ###
 add_library(
     Chip8Core
     src/CHIP_8/CPU.cpp
@@ -24,9 +24,12 @@ target_link_libraries(
     Emulation
     PUBLIC
         Chip8Core
+        sfml-system
 )
 
+### External libraries ###
 include(FetchContent)
+
 # SFML 2.6.2
 FetchContent_Declare(
     SFML
@@ -46,12 +49,33 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
+### Test executables ###
+file(GLOB TEST_SOURCES "tests/test_*.cpp")
+
+# Unit tests for each module
+foreach(test_file ${TEST_SOURCES})
+    get_filename_component(test_name ${test_file} NAME_WE)
+    add_executable(${test_name} ${test_file})
+    target_link_libraries(${test_name}
+        PRIVATE 
+            Chip8Core
+            Emulation
+            gmock
+            gtest_main
+            sfml-graphics
+            sfml-system
+    )
+    target_include_directories(${test_name} PUBLIC tests/include)
+endforeach()
+
+# Run all unit tests
 add_executable(unit_tests
     tests/test_ram.cpp
     tests/test_cpu.cpp
     tests/test_display.cpp
     tests/test_controller.cpp
     tests/test_emulation.cpp
+    # tests/test_renderer.cpp
     # Add other test sources here
 )
 
@@ -67,6 +91,7 @@ target_link_libraries(unit_tests
         sfml-system
 )
 
+### Main pogram ###
 add_executable(JC8E
     src/main.cpp
 )
