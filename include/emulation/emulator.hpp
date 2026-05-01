@@ -46,6 +46,12 @@ class Emulator {
         // Resumes emulation
         void unpause() {paused = false;}
 
+        // Presses a controller key. k must be a byte from 0x0 to 0xF
+        void pressKey(const byte_t k);
+
+        // Releases a controller key. k must be a byte from 0x0 to 0xF
+        void releaseKey(const byte_t k);
+
         // Loads a rom from the given path
         virtual void load(const std::filesystem::path& path);
 

@@ -38,6 +38,14 @@ const vector<pixel_t>& Emulator::getDisplayPixels() const{
     return display.getPixels();
 }
 
+void Emulator::pressKey(const byte_t k){
+    controller.press(k);
+}
+
+void Emulator::releaseKey(const byte_t k){
+    controller.release(k);
+}
+
 void Emulator::load(const std::filesystem::path &path){
     ram.load(path);
     unpause();

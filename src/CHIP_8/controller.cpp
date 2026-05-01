@@ -21,4 +21,5 @@ KEYS Controller::getPressedKey() const{
     if (keys.test(0xD)) return KEYS::KEY_D;
     if (keys.test(0xE)) return KEYS::KEY_E;
     if (keys.test(0xF)) return KEYS::KEY_F;
+    return KEYS::NO_KEY;
 }
