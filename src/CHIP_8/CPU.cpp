@@ -85,6 +85,8 @@ void CPU::decode_execute(instruction_t instruction){
     NN      = ((instruction & 0x00FF) >> 0);  // Third and fourth bytes
     NNN     = ((instruction & 0x0FFF) >> 0);  // Second, third and fourth bytes
 
+    bool shouldSetFlag = false; // Flag is set only at the end of instructions
+
     switch (TYPE){
         case 0x0:
             switch (NNN){
@@ -154,36 +156,51 @@ void CPU::decode_execute(instruction_t instruction){
                 case 4: // 0x8XY4 XY = VX + VY. Carry flag set on overflow
                 {
                     uint16_t result = regs.at(X) + regs.at(Y);
-                    if (result > 255) setFlag();
-                    else resetFlag();
+                    if (result > 255) shouldSetFlag = true;
+                    else shouldSetFlag = false;
                     regs.at(X) += regs.at(Y);
+
+                    if (shouldSetFlag) setFlag();
+                    else resetFlag();
                     break;
                 }
 
                 case 5: // 0x8XY5 VX = VX - VY. Carry flag set if underflow doesn't occur
-                    if(regs.at(Y) > regs.at(X)) resetFlag();
-                    else setFlag();
+                    if(regs.at(Y) > regs.at(X)) shouldSetFlag = false;
+                    else shouldSetFlag = true;
                     regs.at(X) -= regs.at(Y);
+
+                    if (shouldSetFlag) setFlag();
+                    else resetFlag();
                     break;
 
                 case 6: // 0x8XY6 Shift VX 1 bit to the right
                     if (USE_LEGACY_BEHAVIOR) regs.at(X) = regs.at(Y);
-                    if(regs.at(X) & 0b00000001) setFlag();
-                    else resetFlag();
+                    if(regs.at(X) & 0b00000001) shouldSetFlag = true;
+                    else shouldSetFlag = false;
                     regs.at(X) = regs.at(X) >> 1;
+
+                    if (shouldSetFlag) setFlag();
+                    else resetFlag();
                     break;
 
                 case 7: // 0x8XY7 VX = VY - VX. Carry flag set if underflow doesn't occur
-                    if(regs.at(X) > regs.at(Y)) resetFlag();
-                    else setFlag();
+                    if(regs.at(X) > regs.at(Y)) shouldSetFlag = false;
+                    else shouldSetFlag = true;
                     regs.at(X) = regs.at(Y) - regs.at(X);
+
+                    if (shouldSetFlag) setFlag();
+                    else resetFlag();
                     break;
 
                 case 0xE: //0x8XYE Shift VX 1 bit to the left
                     if (USE_LEGACY_BEHAVIOR) regs.at(X) = regs.at(Y);
-                    if(regs.at(X) & 0b10000000) setFlag();
-                    else resetFlag();
+                    if(regs.at(X) & 0b10000000) shouldSetFlag = true;
+                    else shouldSetFlag = false;
                     regs.at(X) = regs.at(X) << 1;
+
+                    if (shouldSetFlag) setFlag();
+                    else resetFlag();
                     break;
 
                 default:
