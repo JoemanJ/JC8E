@@ -17,16 +17,17 @@ void RAM::bulkWrite(addr_t startAddress, size_t size, const byte_t *data){
 
 void RAM::load(const filesystem::path& path){
     ifstream romFile(path, ios::binary|ios::ate);
+    
     if(romFile.is_open()){
         streamsize size = romFile.tellg();
 
         romFile.seekg(0, ios::beg);
 
         vector<char> buffer(size);
-        romFile.close();
-
+        
         if(romFile.read(buffer.data(), size)){
             bulkWrite(0x200, size, (byte_t*)buffer.data());
+            romFile.close();
         }
     }
 }

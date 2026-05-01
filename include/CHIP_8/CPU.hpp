@@ -2,6 +2,7 @@
 #include <array>
 #include <stack>
 #include <random>
+#include "ICPU.hpp"
 #include "commons.hpp"
 #include "IRAM.hpp"
 #include "Idisplay.hpp"
@@ -30,7 +31,7 @@ inline constexpr byte_t FONT[] = {
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 }; 
 
-class CPU{
+class CPU: public ICPU{
     // For unit tests
     friend class CPUTest;
 

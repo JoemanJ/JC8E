@@ -46,3 +46,7 @@ TEST_F(RAMTest, TryingToWriteToAnOutOfRangeAddressThrowsAnException){
 TEST_F(RAMTest, TryingToReadFromAnOutOfRangeAddressThrowsAnException){
     EXPECT_THROW(ram.write(RAM_SIZE, 0xFF), std::out_of_range);
 }
+
+TEST_F(RAMTest, CanLoadAROMFileToMEmory){
+    // ram.load()
+}

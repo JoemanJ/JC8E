@@ -1,37 +1,17 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <array>
+#include <filesystem>
+#include "mocks.hpp"
+
+#include "commons.hpp"
 #include "CHIP_8/CPU.hpp"
 #include "CHIP_8/RAM.hpp"
 #include "CHIP_8/display.hpp"
-#include "commons.hpp"
-#include "filesystem"
 
 using namespace std;
 using namespace testing;
 
-class MockRAM : public IRAM {
-    public:
-        MOCK_METHOD(void, write, (addr_t address, byte_t value), (override));
-        MOCK_METHOD(byte_t, read, (addr_t address), (const, override));
-        MOCK_METHOD(void, bulkWrite, (addr_t startAddress, std::size_t size, const byte_t *data), (override));
-        MOCK_METHOD(void, load, (const filesystem::path& path));
-};
-
-class MockDisplay : public IDisplay {
-    public:
-        MOCK_METHOD(void, togglePixel, (byte_t x, byte_t y), (override));
-        MOCK_METHOD(void, clear, (), (override));
-        MOCK_METHOD(const byte_t, getWidth, (), (override, const));
-        MOCK_METHOD(const byte_t, getHeight, (), (override, const));
-        MOCK_METHOD(const pixel_t, getPixel, (byte_t x, byte_t y), (override, const));
-};
-
-class MockController: public IController {
-    public:
-        MOCK_METHOD(bool, isPressed, (byte_t key), (override, const));
-        MOCK_METHOD(KEYS, getPressedKey, (), (override, const));
-};
 
 class CPUTest : public Test {
     protected:

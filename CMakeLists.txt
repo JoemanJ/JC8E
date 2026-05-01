@@ -51,8 +51,11 @@ add_executable(unit_tests
     tests/test_cpu.cpp
     tests/test_display.cpp
     tests/test_controller.cpp
+    # tests/test_emulation.cpp
     # Add other test sources here
 )
+
+target_include_directories(unit_tests PUBLIC tests/include)
 
 target_link_libraries(unit_tests
     PRIVATE

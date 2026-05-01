@@ -3,18 +3,22 @@
 
 using namespace std;
 
-Emulator::Emulator(sf::Time CPUInstructionTime, sf::Time CPUTimerTime):
-    CPUInstructionTime(CPUInstructionTime),
-    CPUTimerTime(CPUTimerTime),
-    ram(),
-    cpu(ram, display, controller, false),
-    display(64, 32),
-    controller(),
-    paused(true)
+Emulator::Emulator(
+    CPU& cpu, 
+    IRAM& ram, 
+    IDisplay& display, 
+    IController& controller, 
+    sf::Time CPUInstructionTime, 
+    sf::Time CPUTimerTime
+): 
+    cpu(cpu), ram(ram), display(display), controller(controller),
+    CPUInstructionTime(CPUInstructionTime), CPUTimerTime(CPUTimerTime), paused(true)
 {
+      
 }
 
-void Emulator::processTime(const sf::Time& dt){
+void Emulator::processTime(const sf::Time &dt)
+{
     if(paused) return;
 
     instructionTimeAccumulator += dt;
@@ -30,7 +34,7 @@ void Emulator::processTime(const sf::Time& dt){
         timerTimeAccumulator -= CPUTimerTime;
     }
 }
-vector<pixel_t> Emulator::getDisplayPixels() const{
+const vector<pixel_t>& Emulator::getDisplayPixels() const{
     return display.getPixels();
 }
 

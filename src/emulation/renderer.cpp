@@ -20,6 +20,8 @@ void Renderer::update(const vector<byte_t>& source){
         buffer.at(i*4 + 2) = pixel;
         // alpha channel is always 255
     }
+
+    screenTexture.update(buffer.data());
 }
 
 void Renderer::draw(sf::RenderWindow &window) const{

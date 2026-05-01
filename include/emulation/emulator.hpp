@@ -14,13 +14,18 @@ class Emulator {
     public:
     
         /*
-        Initializes the emulator with a new CPU, RAM, Controller, Display and
-        timing logic.
+        Orchestrates the emulation process and interaction between device classes
+        through a simple interface.
         */
         Emulator(
-                sf::Time CPUInstructionTime = T500Hz,
-                sf::Time CPUTimerTime = T60Hz
-            );
+            CPU& cpu,
+            IRAM& ram,
+            IDisplay& display,
+            IController& controller,
+
+            sf::Time CPUInstructionTime = T500Hz,
+            sf::Time CPUTimerTime = T60Hz
+       );
 
         /*
         This function should be called in the main loop.
@@ -33,7 +38,7 @@ class Emulator {
         Returns an array of 64*32 bytes representing each pixel on the display.
         An "off" has value 0; an "on" pixel has value 255.
         */
-        std::vector<pixel_t> getDisplayPixels() const;
+        const std::vector<pixel_t>& getDisplayPixels() const;
 
         // Pauses emulation
         void pause() {paused = true;}
@@ -45,10 +50,10 @@ class Emulator {
         virtual void load(const std::filesystem::path& path);
 
     private:
-        RAM ram;
-        Display display;
-        Controller controller;
-        CPU cpu;
+        IRAM& ram;
+        IDisplay& display;
+        IController& controller;
+        CPU& cpu;
         
         bool paused;
 
