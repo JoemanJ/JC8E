@@ -9,10 +9,17 @@ scale(scale), screenWidth(screenWidth), screenHeight(screenHeight)
     screenSprite.setTexture(screenTexture);
     screenSprite.setScale(sf::Vector2(scale, scale));
 
-    buffer.fill(255);
+    for(uint16_t i = 0; i<screenWidth*screenHeight*4; i++){
+        buffer.push_back(255); // Buffer starts fully white
+    }
 }
 
 void Renderer::update(const vector<byte_t>& source){
+    convertPixelsFromChip8(source);
+    screenTexture.update(buffer.data());
+}
+
+void Renderer::convertPixelsFromChip8(const std::vector<byte_t>& source){
     for(uint16_t i=0; i<screenWidth*screenHeight; i++){
         byte_t pixel = source.at(i);
         buffer.at(i*4 + 0) = pixel;
@@ -20,8 +27,6 @@ void Renderer::update(const vector<byte_t>& source){
         buffer.at(i*4 + 2) = pixel;
         // alpha channel is always 255
     }
-
-    screenTexture.update(buffer.data());
 }
 
 void Renderer::draw(sf::RenderWindow &window) const{
