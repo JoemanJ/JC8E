@@ -1,3 +1,5 @@
+#pragma once
+
 class ICPU{
     public:
         virtual void step() = 0;

@@ -18,7 +18,7 @@ class Emulator {
         through a simple interface.
         */
         Emulator(
-            CPU& cpu,
+            ICPU& cpu,
             IRAM& ram,
             IDisplay& display,
             IController& controller,
@@ -53,7 +53,7 @@ class Emulator {
         IRAM& ram;
         IDisplay& display;
         IController& controller;
-        CPU& cpu;
+        ICPU& cpu;
         
         bool paused;
 

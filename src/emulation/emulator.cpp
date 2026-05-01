@@ -4,7 +4,7 @@
 using namespace std;
 
 Emulator::Emulator(
-    CPU& cpu, 
+    ICPU& cpu, 
     IRAM& ram, 
     IDisplay& display, 
     IController& controller, 
@@ -24,12 +24,12 @@ void Emulator::processTime(const sf::Time &dt)
     instructionTimeAccumulator += dt;
     timerTimeAccumulator += dt;
 
-    while(instructionTimeAccumulator > CPUInstructionTime){
+    while(instructionTimeAccumulator >= CPUInstructionTime){
         cpu.step();
         instructionTimeAccumulator -= CPUInstructionTime;
     }
 
-    while(timerTimeAccumulator > CPUTimerTime){
+    while(timerTimeAccumulator >= CPUTimerTime){
         cpu.decTimers();
         timerTimeAccumulator -= CPUTimerTime;
     }
