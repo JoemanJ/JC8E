@@ -86,6 +86,7 @@ void CPU::decode_execute(instruction_t instruction){
     NNN     = ((instruction & 0x0FFF) >> 0);  // Second, third and fourth bytes
 
     bool shouldSetFlag = false; // Flag is set only at the end of instructions
+    static KEYS awaitingRelease = NO_KEY; // Needed for instruction FX0A
 
     switch (TYPE){
         case 0x0:
@@ -157,55 +158,38 @@ void CPU::decode_execute(instruction_t instruction){
                 {
                     uint16_t result = regs.at(X) + regs.at(Y);
                     if (result > 255) shouldSetFlag = true;
-                    else shouldSetFlag = false;
                     regs.at(X) += regs.at(Y);
-
-                    if (shouldSetFlag) setFlag();
-                    else resetFlag();
                     break;
                 }
 
                 case 5: // 0x8XY5 VX = VX - VY. Carry flag set if underflow doesn't occur
-                    if(regs.at(Y) > regs.at(X)) shouldSetFlag = false;
-                    else shouldSetFlag = true;
+                    if(regs.at(Y) <= regs.at(X)) shouldSetFlag = true;
                     regs.at(X) -= regs.at(Y);
-
-                    if (shouldSetFlag) setFlag();
-                    else resetFlag();
                     break;
 
                 case 6: // 0x8XY6 Shift VX 1 bit to the right
                     if (USE_LEGACY_BEHAVIOR) regs.at(X) = regs.at(Y);
                     if(regs.at(X) & 0b00000001) shouldSetFlag = true;
-                    else shouldSetFlag = false;
                     regs.at(X) = regs.at(X) >> 1;
-
-                    if (shouldSetFlag) setFlag();
-                    else resetFlag();
                     break;
 
                 case 7: // 0x8XY7 VX = VY - VX. Carry flag set if underflow doesn't occur
-                    if(regs.at(X) > regs.at(Y)) shouldSetFlag = false;
-                    else shouldSetFlag = true;
+                    if(regs.at(X) <= regs.at(Y)) shouldSetFlag = true;
                     regs.at(X) = regs.at(Y) - regs.at(X);
-
-                    if (shouldSetFlag) setFlag();
-                    else resetFlag();
                     break;
 
                 case 0xE: //0x8XYE Shift VX 1 bit to the left
                     if (USE_LEGACY_BEHAVIOR) regs.at(X) = regs.at(Y);
                     if(regs.at(X) & 0b10000000) shouldSetFlag = true;
-                    else shouldSetFlag = false;
                     regs.at(X) = regs.at(X) << 1;
-
-                    if (shouldSetFlag) setFlag();
-                    else resetFlag();
                     break;
 
                 default:
                     throw invalidInstruction(instruction);
             }
+            // 0x8 instructions modify the flag register
+            if (shouldSetFlag) setFlag();
+            else resetFlag();
             break;
 
         case 0x9:
@@ -306,11 +290,28 @@ void CPU::decode_execute(instruction_t instruction){
                 {
                     KEYS k = controller.getPressedKey();
 
-                    // Loop this instruction while no keys are pressed
-                    if (k == KEYS::NO_KEY){
+                    // Loop this instruction until a key is pressed and released
+                    // Step 1: await key press
+                    if (awaitingRelease == NO_KEY && k == NO_KEY){
                         PC -= 2;
                         break;
-                    } else regs.at(X) = k;
+                    } 
+
+                    // Step 2: Save presed key
+                    if (awaitingRelease == NO_KEY && k != NO_KEY){
+                        awaitingRelease = k;
+                        PC -= 2;
+                        break;
+                    }
+
+                    // Step 3: await key release
+                    if(controller.isPressed(awaitingRelease)){
+                        PC -= 2;
+                        break;
+                    }
+
+                    regs.at(X) = awaitingRelease;
+                    awaitingRelease = NO_KEY;
                 }
                 break;
 
