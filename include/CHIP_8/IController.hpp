@@ -17,12 +17,15 @@ class IController{
 
         // Changes a key's state to pressed (true)
         virtual void press(const byte_t key) = 0;
+        virtual void press(const KEYS key) = 0;
 
         // Changes a key's state to released (false)
         virtual void release(const byte_t key) = 0;
+        virtual void release(const KEYS key) = 0;
 
         // Returns true if the given key is pressed. Returns false otherwise
         virtual bool isPressed(const byte_t key) const = 0;
+        virtual bool isPressed(const KEYS key) const = 0;
 
         /*
         Returns NO_KEY if there are no keys pressed. Otherwise, returns the first

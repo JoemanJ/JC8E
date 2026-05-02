@@ -18,6 +18,7 @@ add_library(
     Emulation
     src/emulation/emulator.cpp
     src/emulation/renderer.cpp
+    src/emulation/inputMapper.cpp
 )
 target_include_directories(Emulation PUBLIC include)
 target_link_libraries(
@@ -75,6 +76,7 @@ add_executable(unit_tests
     tests/test_display.cpp
     tests/test_controller.cpp
     tests/test_emulation.cpp
+    tests/test_InputMapper.cpp
     # tests/test_renderer.cpp
     # Add other test sources here
 )

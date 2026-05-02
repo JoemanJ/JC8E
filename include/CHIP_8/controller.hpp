@@ -10,12 +10,15 @@ class Controller: public IController{
     public:
         // Changes a key's state to pressed (true)
         void press(byte_t key) {keys.set(key);}
+        void press(KEYS key) {keys.set(key);}
 
         // Changes a key's state to released (false)
         void release(byte_t key) {keys.reset(key);}
+        void release(KEYS key) {keys.reset(key);}
 
         // Returns true if the given key is pressed. Returns false otherwise
         bool isPressed(byte_t key) const {return keys.test(key);}
+        bool isPressed(KEYS key) const {return keys.test(key);}
 
         /*
         Returns NO_KEY if there are no keys pressed. Otherwise, returns the first
