@@ -10,10 +10,12 @@ height(height)
     for (uint16_t i = 0; i < totalPixels; i++){
         buffer.push_back(0x00); // All pixels start off
     }
+    updated = true;
 }
 
 void Display::clear(){
     for (pixel_t& p: buffer){
         p = 0x00;
     }
+    updated = true;
 }

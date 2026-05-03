@@ -11,4 +11,6 @@ class IDisplay{
         virtual const byte_t getHeight() const = 0;
         virtual const pixel_t getPixel(byte_t x, byte_t y) const = 0;
         virtual const std::vector<pixel_t>& getPixels() const = 0;
+        virtual bool getUpdatedFlag() const = 0; 
+        virtual void resetUpdatedFlag() = 0;
 };

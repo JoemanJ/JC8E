@@ -15,6 +15,8 @@ class Display : public IDisplay{
 
         uint16_t width;
         uint16_t height;    
+
+        bool updated; // If the screen has been updated and needs to be redrawn
     public:
         // Initializes a completely black display
         Display(uint8_t width = SCREEN_WIDTH, uint8_t height = SCREEN_HEIGHT);
@@ -31,6 +33,7 @@ class Display : public IDisplay{
         void togglePixel(byte_t x, byte_t y) override {
             pixel_t& p = buffer.at(y*width + x);
             p = ~p;
+            updated = true;
         }
         /*
         If the pixel on position (index%SCREEN_WIDTH, index//SCREEN_WIDTH) is on:
@@ -39,6 +42,7 @@ class Display : public IDisplay{
        void togglePixel(uint16_t index){
             pixel_t& p = buffer.at(index);
             p = ~p;
+            updated = true;
        }
 
        // Turns every píxel of the display black
@@ -46,4 +50,7 @@ class Display : public IDisplay{
 
        // Returns a vector with all pixels on the screen
        const std::vector<pixel_t>& getPixels() const {return buffer;} 
+
+       bool getUpdatedFlag() const override {return updated;}
+       void resetUpdatedFlag() override {updated = false;}
 };

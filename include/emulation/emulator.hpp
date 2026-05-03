@@ -53,7 +53,13 @@ class Emulator {
         void releaseKey(const byte_t k);
 
         // Loads a rom from the given path
-        virtual void load(const std::filesystem::path& path);
+        void load(const std::filesystem::path& path);
+
+        // Returns true if the display has been updated and needs to be redrawn
+        bool displayNeedsRedraw() const {return display.getUpdatedFlag();}
+
+        // Sets the display as updated so it down't neet to be redrawn until the next change
+        void setDisplayAsUpdated(){display.resetUpdatedFlag();}
 
     private:
         IRAM& ram;

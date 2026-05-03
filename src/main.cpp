@@ -6,26 +6,12 @@
 #include <CHIP_8/display.hpp>
 #include <emulation/emulator.hpp>
 #include <emulation/renderer.hpp>
+#include <emulation/inputMapper.hpp>
 #include <filesystem>
 #include <unordered_map>
 #include <optional>
 
 using namespace std;
-
-unordered_map<sf::Keyboard::Key, byte_t> keyMapper{
-    {sf::Keyboard::Key::Num1, 0x1}, {sf::Keyboard::Key::Num2, 0x2}, {sf::Keyboard::Key::Num3, 0x3}, {sf::Keyboard::Key::Num4, 0xC},
-    {sf::Keyboard::Key::Q, 0x4}, {sf::Keyboard::Key::W, 0x5}, {sf::Keyboard::Key::E, 0x6}, {sf::Keyboard::Key::R, 0xD},
-    {sf::Keyboard::Key::A, 0x7}, {sf::Keyboard::Key::S, 0x8}, {sf::Keyboard::Key::D, 0x9}, {sf::Keyboard::Key::F, 0xE},
-    {sf::Keyboard::Key::Z, 0xA}, {sf::Keyboard::Key::X, 0x0}, {sf::Keyboard::Key::C, 0xB}, {sf::Keyboard::Key::V, 0xF}
-};
-
-optional<byte_t> translateKeyPress(sf::Keyboard::Key key){
-    auto it = keyMapper.find(key);
-    if (it != keyMapper.end()){
-        return it->second;
-    }
-    return std::nullopt;
-}
 
 int main(int argc, char** argv)
 {
@@ -36,6 +22,7 @@ int main(int argc, char** argv)
 
     Emulator emulator = Emulator(cpu, ram, display, controller, T500Hz, T60Hz);
     Renderer renderer = Renderer(64, 32, 10.0f);
+    InputMapper inputMapper = InputMapper();
 
     sf::RenderWindow window(sf::VideoMode(640,320), "JC8E");
     sf::Clock dt;
@@ -64,23 +51,27 @@ int main(int argc, char** argv)
             
             // Key pressed
             else if(event.type == sf::Event::KeyPressed){
-                auto chip8Key = translateKeyPress(event.key.code);
-                if(chip8Key.has_value()) emulator.pressKey(chip8Key.value());
+                KEYS k = inputMapper.translate(event.key.code);
+                if(k != NO_KEY) emulator.pressKey(k);
             }
 
             // keyReleased
             else if(event.type == sf::Event::KeyReleased){
-                auto chip8Key = translateKeyPress(event.key.code);
-                if(chip8Key.has_value()) emulator.releaseKey(chip8Key.value());
+                KEYS k = inputMapper.translate(event.key.code);
+                if(k != NO_KEY) emulator.releaseKey(k);
             }
         }
 
         // Frame pipeline
         window.clear(sf::Color::Black);
-        // Draw stuff...
-        renderer.update(emulator.getDisplayPixels());
-        renderer.draw(window);
-        window.display();
+        
+        // Redraw the screen only if something has changed
+        if(emulator.displayNeedsRedraw()){
+            renderer.update(emulator.getDisplayPixels());
+            emulator.setDisplayAsUpdated();
+            renderer.draw(window);
+            window.display();
+        } 
     }
 
     return 0;

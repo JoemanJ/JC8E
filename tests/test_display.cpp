@@ -45,3 +45,12 @@ TEST_F(DisplayTest, ConGetAPixelsValueWithGetPixel){
     display.togglePixel(0, 0);
     ASSERT_EQ(display.getPixel(0, 0), 0xFF);
 }
+
+TEST_F(DisplayTest, UpdatedFlagStartsTrue){
+    ASSERT_EQ(display.getUpdatedFlag(), true);
+}
+
+TEST_F(DisplayTest, CanResetUpdatedFlag){
+    display.resetUpdatedFlag();
+    ASSERT_EQ(display.getUpdatedFlag(), false);
+}
