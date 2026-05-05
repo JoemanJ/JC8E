@@ -10,7 +10,9 @@ O nome JC8E vem de "**J**oe's **C**HIP-**8** **E**mulator*" (ou "Emulador de CHI
 Este projeto foi desenvolvido e testado no seguinte ambiente:
 - C++ 17
 - CMake 3.28.3
-- SFML 2.6.1 **(!)**
+- SFML 2.6.2 **(!)**
+- Dear ImGui v1.91.0
+- imgui-SFML v2.6
 
 Versões mais antigas podem ser compatíveis, mas não foram testadas. Versões mais recentes devem funcionar desde que sejam retrocompatíveis, como é o caso do padrão C++ e do CMake.
 

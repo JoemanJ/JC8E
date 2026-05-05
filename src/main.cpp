@@ -25,6 +25,7 @@ int main(int argc, char** argv)
     InputMapper inputMapper = InputMapper();
 
     sf::RenderWindow window(sf::VideoMode(640,320), "JC8E");
+    window.setFramerateLimit(30);
     sf::Clock dt;
     dt.restart();
 

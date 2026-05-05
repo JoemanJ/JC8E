@@ -50,6 +50,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
+add_subdirectory(external)
+
 ### Test executables ###
 file(GLOB TEST_SOURCES "tests/test_*.cpp")
 
@@ -94,12 +96,30 @@ target_link_libraries(unit_tests
 )
 
 ### Main pogram ###
-add_executable(JC8E
+add_executable(${PROJECT_NAME}
     src/main.cpp
 )
 
-target_link_libraries(JC8E
+target_link_libraries(${PROJECT_NAME} PRIVATE
     Chip8Core
     Emulation
-    sfml-graphics
+    # sfml-graphics
+    ImGui-SFML::ImGui-SFML
 )
+
+# # Imgui and Imgui-SFML
+# target_include_directories(${PROJECT_NAME} PRIVATE
+#     external/imgui
+#     external/ingui-sfml
+# )
+
+# set(IMGUI_SOURCES
+#     external/imgui/imgui.cpp
+#     external/imgui/imgui_draw.cpp
+#     external/imgui/imgui_widgets.cpp
+#     external/imgui/imgui_tables.cpp
+#     external/imgui/imgui_demo.cpp
+#     external/imgui-sfml/imgui-SFML.cpp
+# )
+
+# target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_SOURCES})
