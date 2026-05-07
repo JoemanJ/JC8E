@@ -3,8 +3,8 @@ include(FetchContent)
 # Dear Imgui
 FetchContent_Declare(
     dearimgui
-    GIT_REPOSITORY https://github.com/ocornut/imgui
-    GIT_TAG v1.91.0
+    GIT_REPOSITORY https://github.com/ocornut/imgui/
+    GIT_TAG v1.91.0-docking
 )
 add_subdirectory(dearimgui)
 

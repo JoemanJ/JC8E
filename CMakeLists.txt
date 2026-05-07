@@ -50,6 +50,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
+# Other external libraries
 add_subdirectory(external)
 
 ### Test executables ###
@@ -79,7 +80,7 @@ add_executable(unit_tests
     tests/test_controller.cpp
     tests/test_emulation.cpp
     tests/test_InputMapper.cpp
-    # tests/test_renderer.cpp
+    tests/test_renderer.cpp
     # Add other test sources here
 )
 
@@ -95,6 +96,17 @@ target_link_libraries(unit_tests
         sfml-system
 )
 
+add_executable(test_interface1
+    tests/manual/test_interface1.cpp
+)
+
+target_link_libraries(test_interface1
+    PRIVATE
+        Chip8Core
+        Emulation
+        ImGui-SFML::ImGui-SFML
+)
+
 ### Main pogram ###
 add_executable(${PROJECT_NAME}
     src/main.cpp
@@ -106,20 +118,3 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     # sfml-graphics
     ImGui-SFML::ImGui-SFML
 )
-
-# # Imgui and Imgui-SFML
-# target_include_directories(${PROJECT_NAME} PRIVATE
-#     external/imgui
-#     external/ingui-sfml
-# )
-
-# set(IMGUI_SOURCES
-#     external/imgui/imgui.cpp
-#     external/imgui/imgui_draw.cpp
-#     external/imgui/imgui_widgets.cpp
-#     external/imgui/imgui_tables.cpp
-#     external/imgui/imgui_demo.cpp
-#     external/imgui-sfml/imgui-SFML.cpp
-# )
-
-# target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_SOURCES})
