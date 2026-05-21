@@ -25,11 +25,21 @@ class MockDisplay : public IDisplay {
         MOCK_METHOD(const byte_t, getHeight, (), (override, const));
         MOCK_METHOD(const pixel_t, getPixel, (byte_t x, byte_t y), (override, const));
         MOCK_METHOD(const std::vector<pixel_t>&, getPixels, (), (override, const));
+        MOCK_METHOD(bool, getUpdatedFlag, (), (override, const));
+        MOCK_METHOD(void, resetUpdatedFlag, (), (override));
 };
 
 class MockController: public IController {
     public:
+        MOCK_METHOD(void, press, (byte_t key), (override));
+        MOCK_METHOD(void, press, (KEYS key), (override));
+
+        MOCK_METHOD(void, release, (byte_t key), (override));
+        MOCK_METHOD(void, release, (KEYS key), (override));
+
         MOCK_METHOD(bool, isPressed, (byte_t key), (override, const));
+        MOCK_METHOD(bool, isPressed, (KEYS key), (override, const));
+
         MOCK_METHOD(KEYS, getPressedKey, (), (override, const));
 };
 
