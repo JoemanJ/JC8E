@@ -5,3 +5,4 @@ tests/ROMS/
 *.xopp
 lib/
 bin/
+imgui.ini
