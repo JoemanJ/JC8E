@@ -101,15 +101,6 @@ class CPU: public ICPU{
         addr_t stackPop(); // Pops value from stack.
         
         void memWrite(addr_t address, byte_t value); // Write byte do RAM.
-        
-        // /* Writes value to a general purpose register.
-        // Valid values for reg are 0 to 15. */
-        // void regWrite(uint8_t reg, byte_t value);
-        // /* Writes value to a general purpose register.
-        // Valid values for reg are '0' to '9' and 'A' to 'F'. */
-        // void regWrite(char reg, byte_t value);
-        
-        // void IWrite(addr_t value); // Writes value to index register.
 
         /* Fetches next 16-bit instruction (from PC and PC+1) and updates PC */
         instruction_t fetch();
