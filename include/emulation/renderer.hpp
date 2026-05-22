@@ -25,6 +25,8 @@ class Renderer{
         // Draws the internal rendering buffer to the SFML Window
         void draw(sf::RenderWindow& window) const;
 
+        sf::Sprite getScreenSprite() const {return screenSprite;}
+
     protected:
         uint16_t screenWidth;
         uint16_t screenHeight;

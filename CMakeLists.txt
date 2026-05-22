@@ -107,6 +107,17 @@ target_link_libraries(test_interface1
         ImGui-SFML::ImGui-SFML
 )
 
+add_executable(test_interface2
+    tests/manual/test_interface2.cpp
+)
+
+target_link_libraries(test_interface2
+    PRIVATE
+        Chip8Core
+        Emulation
+        ImGui-SFML::ImGui-SFML
+)
+
 ### Main pogram ###
 add_executable(${PROJECT_NAME}
     src/main.cpp
