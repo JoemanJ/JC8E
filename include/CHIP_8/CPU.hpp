@@ -41,9 +41,9 @@ class CPU: public ICPU{
         regs: all 0
         PC: 0x200
         I: 0*/
-        CPU(IRAM& ram, 
-            IDisplay& display, 
-            IController& controller,
+        CPU(sptr<IRAM> ram, 
+            sptr<IDisplay> display, 
+            sptr<IController> controller,
             bool USE_ORIGINAL_SHIFT_BEHAVIOR = false);
         
         byte_t memRead (addr_t address) const; // Read byte from RAM address.
@@ -64,9 +64,9 @@ class CPU: public ICPU{
         void decTimers(); // Decreases delayTimer and soundTimer
         
     private:
-        IRAM& memory; // RAM Memory.
-        IDisplay& display; // Display with binary pixel resolution
-        IController& controller; // 16 key controller
+        sptr<IRAM> memory; // RAM Memory.
+        sptr<IDisplay> display; // Display with binary pixel resolution
+        sptr<IController> controller; // 16 key controller
         std::array<byte_t, 16> regs; // General purpose registers.
         std::stack<addr_t> stack; // Address stack.
         addr_t PC; // Program Counter register.

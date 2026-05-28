@@ -4,14 +4,14 @@
 using namespace std;
 
 Emulator::Emulator(
-    ICPU& cpu, 
-    IRAM& ram, 
-    IDisplay& display, 
-    IController& controller, 
+    uptr<ICPU> cpu, 
+    sptr<IRAM> ram, 
+    sptr<IDisplay> display, 
+    sptr<IController> controller, 
     sf::Time CPUInstructionTime, 
     sf::Time CPUTimerTime
 ): 
-    cpu(cpu), ram(ram), display(display), controller(controller),
+    cpu(std::move(cpu)), ram(ram), display(display), controller(controller),
     CPUInstructionTime(CPUInstructionTime), CPUTimerTime(CPUTimerTime), paused(true)
 {
       
@@ -25,28 +25,28 @@ void Emulator::processTime(const sf::Time &dt)
     timerTimeAccumulator += dt;
 
     while(instructionTimeAccumulator >= CPUInstructionTime){
-        cpu.step();
+        cpu->step();
         instructionTimeAccumulator -= CPUInstructionTime;
     }
 
     while(timerTimeAccumulator >= CPUTimerTime){
-        cpu.decTimers();
+        cpu->decTimers();
         timerTimeAccumulator -= CPUTimerTime;
     }
 }
 const vector<pixel_t>& Emulator::getDisplayPixels() const{
-    return display.getPixels();
+    return display->getPixels();
 }
 
 void Emulator::pressKey(const byte_t k){
-    controller.press(k);
+    controller->press(k);
 }
 
 void Emulator::releaseKey(const byte_t k){
-    controller.release(k);
+    controller->release(k);
 }
 
 void Emulator::load(const std::filesystem::path &path){
-    ram.load(path);
+    ram->load(path);
     unpause();
 }

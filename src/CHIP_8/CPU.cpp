@@ -4,14 +4,14 @@
 #include "CHIP_8/CPU.hpp"
 
 using namespace std;
-CPU::CPU(IRAM& ram, IDisplay& display, IController& controller, bool USE_LEGACY_BEHAVIOR):
+CPU::CPU(sptr<IRAM> ram, sptr<IDisplay> display, sptr<IController> controller, bool USE_LEGACY_BEHAVIOR):
 memory(ram),
 display(display),
 controller(controller),
 USE_LEGACY_BEHAVIOR(USE_LEGACY_BEHAVIOR)
 {
     // Copy font to memory
-    memory.bulkWrite(0x50, sizeof(FONT), FONT);
+    memory->bulkWrite(0x50, sizeof(FONT), FONT);
     
     // Initialize registers
     regs = std::array<byte_t, 16>();
@@ -23,11 +23,11 @@ USE_LEGACY_BEHAVIOR(USE_LEGACY_BEHAVIOR)
 }
 
 byte_t CPU::memRead(addr_t address) const{
-    return memory.read(address);
+    return memory->read(address);
 }
 
 void CPU::memWrite(addr_t address, byte_t value){
-    memory.write(address, value);
+    memory->write(address, value);
 }
 
 void CPU::stackPush(addr_t address){
@@ -42,7 +42,7 @@ addr_t CPU::stackPop(){
 
 uint16_t CPU::fetch()
 {
-    uint16_t instruction = (memory.read(PC) << 8) | memory.read(PC+1);
+    uint16_t instruction = (memory->read(PC) << 8) | memory->read(PC+1);
     PC += 2;
     return instruction;
 }
@@ -92,7 +92,7 @@ void CPU::decode_execute(instruction_t instruction){
         case 0x0:
             switch (NNN){
                 case 0x0E0: // 0x00E0 = clear screen
-                    display.clear();
+                    display->clear();
                     break;
                 
                 case 0x0EE: // 0x00EE = return from subroutine
@@ -226,21 +226,21 @@ void CPU::decode_execute(instruction_t instruction){
         */
         case 0xD: 
             {
-                byte_t displayHeight = display.getHeight();
-                byte_t displayWidth = display.getWidth();
-                byte_t startX = regs.at(X) % display.getWidth();
-                byte_t startY = regs.at(Y) % display.getHeight();
+                byte_t displayHeight = display->getHeight();
+                byte_t displayWidth = display->getWidth();
+                byte_t startX = regs.at(X) % display->getWidth();
+                byte_t startY = regs.at(Y) % display->getHeight();
                 resetFlag();
 
                 for(byte_t i = 0; i<N && startY+i < displayHeight; i++){ // for each line in the sprite
-                    byte_t spriteLine = memory.read(I+i);
+                    byte_t spriteLine = memory->read(I+i);
                     // IDISPLAY VAI PRECISAR DE UMA FUNÇÃO GETPIXEL
                     for (byte_t j=0; j<8 && startX+j < displayWidth; j++){
                         if (spriteLine & (0b10000000 >> j)){
                             byte_t x = startX + j;
                             byte_t y = startY + i;
-                            if (display.getPixel(x, y)) setFlag(); // collision
-                            display.togglePixel(x, y);
+                            if (display->getPixel(x, y)) setFlag(); // collision
+                            display->togglePixel(x, y);
                         }
                     }
                 }
@@ -250,11 +250,11 @@ void CPU::decode_execute(instruction_t instruction){
         case 0xE:
             switch(NN){
                 case 0x9E: // 0xEX9E Skip next instruction if key VX is pressed
-                    if (controller.isPressed(regs.at(X))) PC += 2;
+                    if (controller->isPressed(regs.at(X))) PC += 2;
                     break;
 
                 case 0xA1: // 0xEX9E Skip next instruction if key VX is not pressed
-                    if (!controller.isPressed(regs.at(X))) PC += 2;
+                    if (!controller->isPressed(regs.at(X))) PC += 2;
                     break;
 
                 default:
@@ -288,7 +288,7 @@ void CPU::decode_execute(instruction_t instruction){
 
                 case 0x0A: // 0xFX0A Await key press
                 {
-                    KEYS k = controller.getPressedKey();
+                    KEYS k = controller->getPressedKey();
 
                     // Loop this instruction until a key is pressed and released
                     // Step 1: await key press
@@ -305,7 +305,7 @@ void CPU::decode_execute(instruction_t instruction){
                     }
 
                     // Step 3: await key release
-                    if(controller.isPressed(awaitingRelease)){
+                    if(controller->isPressed(awaitingRelease)){
                         PC -= 2;
                         break;
                     }
@@ -327,15 +327,15 @@ void CPU::decode_execute(instruction_t instruction){
                         d2 = (value % 100) / 10; // Whole division
                         d3 = value % 10;
                         
-                        memory.write(I, d1);
-                        memory.write(I+1, d2);
-                        memory.write(I+2, d3);
+                        memory->write(I, d1);
+                        memory->write(I+1, d2);
+                        memory->write(I+2, d3);
                     }
                     break;
 
                 case 0x55: // 0xFX55 Store V0 through VX to [I] through [I+X]
                     for (uint8_t i = 0; i<=X; i++){
-                        memory.write(I+i, regs.at(i));
+                        memory->write(I+i, regs.at(i));
                     }
                     // Value of I changes in the original behavior
                     if(USE_LEGACY_BEHAVIOR) I += X+1;
@@ -343,7 +343,7 @@ void CPU::decode_execute(instruction_t instruction){
 
                 case 0x65: // 0xFX65 Load V0 through VX from [I] through [I+X]
                     for (uint8_t i = 0; i<=X; i++){
-                        regs.at(i) = memory.read(I+i);
+                        regs.at(i) = memory->read(I+i);
                     }
                     // Value of I changes in the original behavior
                     if(USE_LEGACY_BEHAVIOR) I += X+1;

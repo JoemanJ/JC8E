@@ -18,10 +18,10 @@ class Emulator {
         through a simple interface.
         */
         Emulator(
-            ICPU& cpu,
-            IRAM& ram,
-            IDisplay& display,
-            IController& controller,
+            uptr<ICPU> cpu,
+            sptr<IRAM> ram,
+            sptr<IDisplay> display,
+            sptr<IController> controller,
 
             sf::Time CPUInstructionTime = T500Hz,
             sf::Time CPUTimerTime = T60Hz
@@ -56,16 +56,16 @@ class Emulator {
         void load(const std::filesystem::path& path);
 
         // Returns true if the display has been updated and needs to be redrawn
-        bool displayNeedsRedraw() const {return display.getUpdatedFlag();}
+        bool displayNeedsRedraw() const {return display->getUpdatedFlag();}
 
         // Sets the display as updated so it down't neet to be redrawn until the next change
-        void setDisplayAsUpdated(){display.resetUpdatedFlag();}
+        void setDisplayAsUpdated(){display->resetUpdatedFlag();}
 
     private:
-        IRAM& ram;
-        IDisplay& display;
-        IController& controller;
-        ICPU& cpu;
+        sptr<IRAM> ram;
+        sptr<IDisplay> display;
+        sptr<IController> controller;
+        uptr<ICPU> cpu;
         
         bool paused;
 
