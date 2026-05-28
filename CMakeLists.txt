@@ -118,7 +118,7 @@ target_link_libraries(test_interface2
         ImGui-SFML::ImGui-SFML
 )
 
-### Main pogram ###
+### Main program ###
 add_executable(${PROJECT_NAME}
     src/main.cpp
 )
