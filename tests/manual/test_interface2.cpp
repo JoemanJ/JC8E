@@ -19,12 +19,12 @@ namespace igsf = ImGui::SFML;
 
 int main(int argc, char** argv)
 {
-    RAM ram = RAM();
-    Display display = Display(64, 32);
-    Controller controller = Controller();
-    CPU cpu(ram, display, controller, true);
+    sptr<RAM> ram = make_shared<RAM>();
+    sptr<Display> display = make_shared<Display>(64, 32);
+    sptr<Controller> controller = make_shared<Controller>();
+    uptr<CPU> cpu = make_unique<CPU>(ram, display, controller, true);
 
-    Emulator emulator = Emulator(cpu, ram, display, controller, T500Hz, T60Hz);
+    Emulator emulator = Emulator(move(cpu), ram, display, controller, T500Hz, T60Hz);
     Renderer renderer = Renderer(64, 32, 10.0f);
     InputMapper inputMapper = InputMapper();
 

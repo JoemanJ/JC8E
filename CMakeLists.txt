@@ -5,8 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ### My libraries ###
-add_library(
-    Chip8Core
+add_library(Chip8Core
     src/CHIP_8/CPU.cpp
     src/CHIP_8/RAM.cpp
     src/CHIP_8/display.cpp
@@ -14,18 +13,26 @@ add_library(
 )
 target_include_directories(Chip8Core PUBLIC include)
 
-add_library(
-    Emulation
+add_library(Emulation
     src/emulation/emulator.cpp
     src/emulation/renderer.cpp
     src/emulation/inputMapper.cpp
 )
 target_include_directories(Emulation PUBLIC include)
-target_link_libraries(
-    Emulation
+target_link_libraries(Emulation
     PUBLIC
         Chip8Core
         sfml-system
+)
+
+add_library(Application
+    src/application.cpp
+)
+target_include_directories(Application PUBLIC include)
+target_link_libraries(Application
+    PUBLIC
+        Emulation
+        ImGui-SFML::ImGui-SFML
 )
 
 ### External libraries ###
@@ -116,6 +123,18 @@ target_link_libraries(test_interface2
         Chip8Core
         Emulation
         ImGui-SFML::ImGui-SFML
+)
+
+add_executable(test_interface3
+    tests/manual/test_interface3.cpp
+)
+
+target_link_libraries(test_interface3
+    PRIVATE
+        Chip8Core
+        Emulation
+        ImGui-SFML::ImGui-SFML
+        Application
 )
 
 ### Main program ###

@@ -1,0 +1,145 @@
+#include <CHIP_8/RAM.hpp>
+#include <CHIP_8/display.hpp>
+#include <CHIP_8/controller.hpp>
+#include <CHIP_8/CPU.hpp>
+#include <application.hpp>
+#include <imgui.h>
+#include <imgui-SFML.h>
+
+using namespace std;
+namespace ig = ImGui;
+namespace igsf = ImGui::SFML;
+
+Application::Application(){
+    initEmulator();
+    initWindow();
+    
+    inputMapper = InputMapper();
+
+    loopClock = sf::Clock();
+    loopClock.restart();
+
+    gameTexture.create(SCREEN_WIDTH, SCREEN_HEIGHT);
+    gameSprite.setTexture(gameTexture);
+
+    pixelBuffer = std::vector<sf::Uint8>();
+    // We fill all the pixels with 255 so we never have to worry about alpha channel
+    for (uint16_t i = 0; i < SCREEN_SIZE*4; i++)
+    {
+        pixelBuffer.push_back(255);
+    }
+    
+}
+
+void Application::initEmulator(){
+    sptr<RAM> ram = make_shared<RAM>();
+    sptr<Display> display = make_shared<Display>(SCREEN_WIDTH, SCREEN_HEIGHT);
+    sptr<Controller> controller = make_shared<Controller>();
+    uptr<CPU> cpu = make_unique<CPU>(ram, display, controller, true);
+    
+    emulator = make_unique<Emulator>(move(cpu), ram, display, controller, T500Hz, T500Hz);
+}
+
+void Application::initWindow(){
+    window.create(sf::VideoMode(640, 320), "JC8E");
+    if (!igsf::Init(window)) return;
+    ig::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+}
+
+void Application::run(){
+    //TODO: Implement a real way to load a rom...
+    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/1-chip8-logo.ch8";
+    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/2-ibm-logo.ch8";
+    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/3-corax+.ch8";
+    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/4-flags.ch8";
+    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/5-quirks.ch8";
+    std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/6-keypad.ch8";
+    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/7-beep.ch8";
+    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/8-scrolling.ch8";
+    emulator->load(romPath);
+    emulator->unpause();
+
+    while(window.isOpen() && !CLOSING){
+        mainLoop();
+    }
+}
+
+void Application::mainLoop(){
+    static sf::Time dt = loopClock.restart();
+
+    handleEvents();
+    emulator->processTime(dt);
+    renderFrame(dt);
+}
+
+void Application::handleEvents(){
+    static sf::Event event;
+    while(window.pollEvent(event)){
+        igsf::ProcessEvent(window, event);
+
+         // Close window
+        if (event.type == sf::Event::Closed){
+            window.close();
+            igsf::Shutdown();
+            CLOSING = true;
+        }
+
+        // Key pressed
+        else if(event.type == sf::Event::KeyPressed){
+            KEYS k = inputMapper.translate(event.key.code);
+            if(k != NO_KEY) emulator->pressKey(k);
+        }
+
+        // Key released
+        else if(event.type == sf::Event::KeyReleased){
+            KEYS k = inputMapper.translate(event.key.code);
+            if(k != NO_KEY) emulator->releaseKey(k);
+        }
+    }
+}
+
+void Application::renderFrame(sf::Time dt){
+    igsf::Update(window, dt);
+
+    
+
+    // window.pushGLStates();
+    ImGuiID dockspaceId = ig::DockSpaceOverViewport(0, ig::GetMainViewport());
+
+    ig::Begin("Game");
+    ig::End();
+
+    ig::Begin("Hello");
+        ig::Button("World!");
+    ig::End();
+
+    window.clear(sf::Color::Black);
+
+    // Redraw game screen
+    if(emulator->displayNeedsRedraw()){
+        updateGameSprite();
+        emulator->setDisplayAsUpdated();
+    }
+    ig::Begin("Game");
+        ig::Image(gameSprite);
+    ig::End();
+    
+    // window.popGLStates();
+    igsf::Render();
+    window.display();
+}
+
+static void convertPixelsFromChip8(const vector<byte_t>& source, vector<sf::Uint8>& target){
+    for(uint16_t i=0; i<SCREEN_SIZE; i++){
+        byte_t pixel = source.at(i);
+        target.at(i*4 + 0) = pixel;
+        target.at(i*4 + 1) = pixel;
+        target.at(i*4 + 2) = pixel;
+        // alpha channel is always 255
+    }
+}
+
+void Application::updateGameSprite(){
+    convertPixelsFromChip8(emulator->getDisplayPixels(), this->pixelBuffer);
+    gameTexture.update(pixelBuffer.data());
+}
