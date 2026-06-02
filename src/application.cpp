@@ -196,8 +196,19 @@ void Application::renderMemory(){
 void Application::renderRegisters(){
     if(!config.runtime.rendering.showRegisters) return;
     
+    static byte_t* regs = emulator->getCPURegs();
     ig::Begin("Registers", &config.runtime.rendering.showRegisters);
-        ig::Text("Registers placeholder");
+        ig::Text("Registers:");
+        ig::Text("%02X %02X %02X %02X\n%02X %02X %02X %02X\n%02X %02X %02X %02X\n%02X %02X %02X %02X\n\n",
+        regs[0], regs[1], regs[2], regs[3], 
+        regs[4], regs[5], regs[6], regs[7], 
+        regs[8], regs[9], regs[10], regs[11],
+        regs[12], regs[13], regs[14], regs[15]);
+
+        ig::Text("PC: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUPC());
+        ig::Text("I: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUI());
+        ig::Text("Delay Timer: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUDelayTimer());
+        ig::Text("Sound Timer: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUSoundTimer());
     ig::End();
 }
 
@@ -205,7 +216,14 @@ void Application::renderExecutionControls(){
     if(!config.runtime.rendering.showExecutionControls) return;
     
     ig::Begin("Execution Controls", &config.runtime.rendering.showExecutionControls);
-        ig::Text("Execution Controls placeholder");
+        if(ig::Button("Play")) emulator->unpause();
+        ig::SameLine();
+        if(ig::Button("Pause")) emulator->pause();
+        ig::SameLine();
+        // TODO: Change this to dinamically account for the emulator's execution time
+        if(ig::Button("Step")) emulator->step();
+        ig::SameLine();
+        // TODO: Implement Restart button
     ig::End();
 }
 

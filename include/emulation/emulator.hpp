@@ -46,6 +46,10 @@ class Emulator {
         // Resumes emulation
         void unpause() {paused = false;}
 
+        // Executes exactly one processor step
+        // FIXME(?) This doesn't decrease the CPU timers
+        void step() {cpu->step();}
+
         // Presses a controller key. k must be a byte from 0x0 to 0xF
         void pressKey(const byte_t k);
 
@@ -63,6 +67,25 @@ class Emulator {
 
         // Exposes the RAM memory data
         byte_t* getRAMBytes();
+
+        // Returns a pointer to the CPU's general purpose registers (V0-VF) raw data
+        byte_t* getCPURegs(){return cpu->getRegs().data();}
+
+        // Returns a pointer to the CPU's Program Counter register
+        addr_t* getCPUPC(){return &cpu->getPC();}
+
+        // TODO: Figure aut a way to expose the stack data
+        // Returns a pointer to the CPU's address stack's raw data
+        // addr_t* getStack(){return cpu->getStack();}
+
+        // Returns a pointer to the CPU's Index register
+        addr_t* getCPUI(){return &cpu->getI();}
+
+        // Returns a pointer to the CPU's Delay Timer register
+        byte_t* getCPUDelayTimer(){return &cpu->getDelayTimer();}
+
+        // Returns a pointer to the CPU's Sound Timer register
+        byte_t* getCPUSoundTimer(){return &cpu->getSoundTimer();}
 
     private:
         sptr<IRAM> ram;

@@ -62,6 +62,24 @@ class CPU: public ICPU{
         void step(); // Executes one fetch-decode-execute cycle
 
         void decTimers(); // Decreases delayTimer and soundTimer
+
+        // Returns a reference to the general purpose registers (V0-VF)
+        std::array<byte_t, 16>& getRegs(){return regs;}
+
+        // Returns a reference to the Program Counter register
+        addr_t& getPC(){return PC;}
+
+        // Returns a reference to the address stack
+        std::stack<addr_t>& getStack(){return stack;}
+
+        // Returns a reference to the Index register
+        addr_t& getI(){return I;}
+
+        // Returns a reference to the Delay Timer register
+        byte_t& getDelayTimer(){return delayTimer;}
+
+        // Returns a reference to the Sound Timer register
+        byte_t& getSoundTimer(){return soundTimer;}
         
     private:
         sptr<IRAM> memory; // RAM Memory.
