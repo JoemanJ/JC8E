@@ -61,6 +61,9 @@ class Emulator {
         // Sets the display as updated so it down't neet to be redrawn until the next change
         void setDisplayAsUpdated(){display->resetUpdatedFlag();}
 
+        // Exposes the RAM memory data
+        byte_t* getRAMBytes();
+
     private:
         sptr<IRAM> ram;
         sptr<IDisplay> display;

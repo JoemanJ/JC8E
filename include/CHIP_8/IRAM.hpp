@@ -11,6 +11,9 @@ class IRAM{
         // Writes a single byte of data to address
         virtual byte_t read(addr_t address) const = 0;
 
+        // Returns a pointer to the raw data
+        virtual byte_t* getRawMemory() = 0;
+
         // Writes a buffer of given size to memory, starting from startAddress
         virtual void bulkWrite(addr_t startAddress, std::size_t size, const byte_t *data) = 0;
 

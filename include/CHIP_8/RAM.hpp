@@ -26,5 +26,8 @@ class RAM : public IRAM{
         void bulkWrite(addr_t startAddress, std::size_t size, const byte_t* data);
 
         // Loads a file from the given path to ram
-        virtual void load(const std::filesystem::path& path);
+        void load(const std::filesystem::path& path);
+
+        // Returns a pointer to the raw data
+        byte_t* getRawMemory(){return memory.data();}
 };

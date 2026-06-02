@@ -14,3 +14,5 @@ FetchContent_Declare(
     GIT_TAG v2.6
 )
 add_subdirectory(imgui-sfml)
+
+add_subdirectory(imgui_memory_editor)

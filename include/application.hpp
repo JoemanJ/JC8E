@@ -15,6 +15,10 @@ struct Config{
 
             bool forceUniformScale = true;
         } rendering;
+
+        struct{
+            bool RAMEditorAlreadyCreated = false;
+        } state;
     } runtime;
 };
 

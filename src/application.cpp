@@ -6,6 +6,7 @@
 #include <imgui.h>
 #include <imgui-SFML.h>
 #include <imgui_internal.h> // For building default dockspace layout
+#include <imgui_memory_editor.h>
 
 using namespace std;
 namespace ig = ImGui;
@@ -180,8 +181,15 @@ void Application::renderDisplay(){
 void Application::renderMemory(){
     if(!config.runtime.rendering.showMemory) return;
     
+    static MemoryEditor memoryEditor;
+
+    if (!config.runtime.state.RAMEditorAlreadyCreated){
+        config.runtime.state.RAMEditorAlreadyCreated = true;
+        memoryEditor.Cols = 64;
+    }
+
     ig::Begin("Memory", &config.runtime.rendering.showMemory);
-        ig::Text("Memory placeholder");
+        memoryEditor.DrawContents(emulator->getRAMBytes(), RAM_SIZE);
     ig::End();
 }
 

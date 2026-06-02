@@ -33,6 +33,7 @@ target_link_libraries(Application
     PUBLIC
         Emulation
         ImGui-SFML::ImGui-SFML
+        imgui_hex_editor
 )
 
 ### External libraries ###

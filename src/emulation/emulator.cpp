@@ -50,3 +50,7 @@ void Emulator::load(const std::filesystem::path &path){
     ram->load(path);
     unpause();
 }
+
+byte_t* Emulator::getRAMBytes(){
+    return ram->getRawMemory();
+}
