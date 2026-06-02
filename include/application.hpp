@@ -5,7 +5,16 @@
 
 struct Config{
     struct{
-        bool resettingUI = true;
+        struct{
+            bool resettingUI = true;
+
+            bool showDisplay = true;
+            bool showMemory = true;
+            bool showRegisters = true;
+            bool showExecutionControls = true;
+
+            bool forceUniformScale = true;
+        } rendering;
     } runtime;
 };
 
@@ -71,7 +80,23 @@ class Application{
         // We pass a time here because imgui-SFML needs the loop time to update the UI
         void renderFrame(sf::Time dt);
 
+        // Creates a Dear ImGui dockspace to house all windows
+        void createMainDockSpace();
+
+        // Renders the game display
+        void renderDisplay();
+
+        // Renders the memory viewer/hex editor
+        void renderMemory();
+        
+        // Renders the registers display
+        void renderRegisters();
+
+        // Renders the execution controls
+        void renderExecutionControls();
+
         // Updates gameSprite with the data from the emulator display. Automatically converts pixels
         // From CHIP 8's black and white format to SFML's RGB 
         void updateGameSprite();
+        
 };

@@ -5,6 +5,7 @@
 #include <application.hpp>
 #include <imgui.h>
 #include <imgui-SFML.h>
+#include <imgui_internal.h> // For building default dockspace layout
 
 using namespace std;
 namespace ig = ImGui;
@@ -41,7 +42,8 @@ void Application::initEmulator(){
 }
 
 void Application::initWindow(){
-    window.create(sf::VideoMode(640, 320), "JC8E");
+    // window.create(sf::VideoMode(640, 320), "JC8E");
+    window.create(sf::VideoMode::getDesktopMode(), "JC8E", sf::Style::Default);
     if (!igsf::Init(window)) return;
     ig::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 }
@@ -68,6 +70,8 @@ void Application::mainLoop(){
     static sf::Time dt = loopClock.restart();
 
     handleEvents();
+    if (CLOSING) return;
+
     emulator->processTime(dt);
     renderFrame(dt);
 }
@@ -82,6 +86,7 @@ void Application::handleEvents(){
             window.close();
             igsf::Shutdown();
             CLOSING = true;
+            return;
         }
 
         // Key pressed
@@ -101,32 +106,99 @@ void Application::handleEvents(){
 void Application::renderFrame(sf::Time dt){
     igsf::Update(window, dt);
 
+    createMainDockSpace();
+    renderDisplay();
+    renderMemory();
+    renderRegisters();
+    renderExecutionControls();
     
+    igsf::Render();
+    window.display();
+}
 
-    // window.pushGLStates();
-    ImGuiID dockspaceId = ig::DockSpaceOverViewport(0, ig::GetMainViewport());
+void Application::createMainDockSpace(){
+    ImGuiID dockspaceId = ig::DockSpaceOverViewport(0, ig::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 
-    ig::Begin("Game");
-    ig::End();
+    if(config.runtime.rendering.resettingUI){
+        config.runtime.rendering.resettingUI = false;
 
-    ig::Begin("Hello");
-        ig::Button("World!");
-    ig::End();
+        // Reset the main docking node
+        ig::DockBuilderRemoveNode(dockspaceId);
+        ig::DockBuilderAddNode(dockspaceId, ImGuiDockNodeFlags_DockSpace);
+        ig::DockBuilderSetNodeSize(dockspaceId, ig::GetMainViewport()->Size); // Ocupy entire window
 
-    window.clear(sf::Color::Black);
+        // Separate main window layout into areas
+        ImGuiID main = dockspaceId;
+        ImGuiID bottom = ig::DockBuilderSplitNode(main, ImGuiDir_Down, 2.0/9.0, nullptr, &main);
+        ImGuiID right = ig::DockBuilderSplitNode(main, ImGuiDir_Right, 0.21, nullptr, &main);
+        ImGuiID right_bottom = ig::DockBuilderSplitNode(right, ImGuiDir_Down, 0.2f, nullptr, &right);
+
+        // Set which window will be displayed in each area
+        ig::DockBuilderDockWindow("Display", main);
+        ig::DockBuilderDockWindow("Memory", bottom);
+        ig::DockBuilderDockWindow("Registers", right);
+        ig::DockBuilderDockWindow("Execution Controls", right_bottom);
+
+        ig::DockBuilderFinish(dockspaceId);
+    }
+}
+
+void Application::renderDisplay(){
+    if(!config.runtime.rendering.showDisplay) return;
 
     // Redraw game screen
     if(emulator->displayNeedsRedraw()){
         updateGameSprite();
         emulator->setDisplayAsUpdated();
     }
-    ig::Begin("Game");
+    
+    ig::Begin("Display", &config.runtime.rendering.showDisplay);
+        // Scale game texture to fit window size
+        ImVec2 area = ImGui::GetContentRegionAvail();
+        sf::Vector2u textureSize = gameTexture.getSize();
+
+        float scaleX = area.x / textureSize.x; 
+        float scaleY = area.y / textureSize.y;
+
+        if (config.runtime.rendering.forceUniformScale){
+            if (scaleX < scaleY) scaleY = scaleX;
+            else scaleX = scaleY;
+        }
+        int totalSizeX = textureSize.x * scaleX;
+        int totalSizeY = textureSize.y * scaleY;
+
+        gameSprite.setScale(sf::Vector2f(scaleX, scaleY));
+        
+        // Center the sprite
+        ig::SetCursorPosX(area.x/2 - totalSizeX/2);
+        ig::SetCursorPosY(area.y/2 - totalSizeY/2);
+
         ig::Image(gameSprite);
     ig::End();
+}
+
+void Application::renderMemory(){
+    if(!config.runtime.rendering.showMemory) return;
     
-    // window.popGLStates();
-    igsf::Render();
-    window.display();
+    ig::Begin("Memory", &config.runtime.rendering.showMemory);
+        ig::Text("Memory placeholder");
+    ig::End();
+}
+
+void Application::renderRegisters(){
+    if(!config.runtime.rendering.showRegisters) return;
+    
+    ig::Begin("Registers", &config.runtime.rendering.showRegisters);
+        ig::Text("Registers placeholder");
+    ig::End();
+}
+
+void Application::renderExecutionControls(){
+    if(!config.runtime.rendering.showExecutionControls) return;
+    
+    ig::Begin("Execution Controls", &config.runtime.rendering.showExecutionControls);
+        ig::Text("Execution Controls placeholder");
+    ig::End();
 }
 
 static void convertPixelsFromChip8(const vector<byte_t>& source, vector<sf::Uint8>& target){

@@ -145,6 +145,6 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Chip8Core
     Emulation
-    # sfml-graphics
     ImGui-SFML::ImGui-SFML
+    Application
 )
