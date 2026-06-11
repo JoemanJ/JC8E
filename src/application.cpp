@@ -129,7 +129,8 @@ void Application::createMainDockSpace(){
         ig::DockBuilderSetNodeSize(dockspaceId, ig::GetMainViewport()->Size); // Ocupy entire window
 
         // Separate main window layout into areas
-        ImGuiID main = dockspaceId;
+        ImGuiID background = dockspaceId;
+        ImGuiID main = ig::DockBuilderAddNode(background);
         ImGuiID bottom = ig::DockBuilderSplitNode(main, ImGuiDir_Down, 2.0/9.0, nullptr, &main);
         ImGuiID right = ig::DockBuilderSplitNode(main, ImGuiDir_Right, 0.21, nullptr, &main);
         ImGuiID right_bottom = ig::DockBuilderSplitNode(right, ImGuiDir_Down, 0.2f, nullptr, &right);
