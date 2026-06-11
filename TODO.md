@@ -32,6 +32,8 @@
 - [ ] Fix Display top not showing
 - [ ] Talk to Rebeca about the screen layout  
     - [ ] Draw references for each widgets  
+- [ ] Implement launch options  
+  - [ ] Launch rom o start  
 
 ### Finishing tasks - To be done before handing the project in
 - [ ] Update README  
