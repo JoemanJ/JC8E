@@ -15,6 +15,7 @@
 - [ ] "Fix" step not accounting for time  
 
 ### Low priority - Extra functionalities or purely stetic changes
+- [ ] Refactor menu bar rendering in src/application.[hpp/cpp]
 - [ ] Implement stack view  
 - [ ] Implement fastforward  
 - [ ] Implement save/load states 
