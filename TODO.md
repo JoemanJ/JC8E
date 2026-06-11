@@ -20,3 +20,8 @@
 - [ ] Fix game window drag  
 - [ ] Talk to Rebeca about the screen layout  
     - [ ] Draw references for each widgets  
+
+### Finishing tasks - To be done before handing the project in
+- [ ] "Prettify" project code  
+  - [ ] Remove commented code  
+- [ ] Review method documentation  
