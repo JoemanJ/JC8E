@@ -2,6 +2,7 @@
 - [x] Fix emulator rom loading 
 - [ ] Implement breakpoints  
 - [x] Implement reset  
+- [ ] Add button to reset rom
 
 ### Medium priority - Important for project functionality
 - [x] Add menu bar  
