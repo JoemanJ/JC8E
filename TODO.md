@@ -15,16 +15,18 @@
 - [ ] "Fix" step not accounting for time  
 
 ### Low priority - Extra functionalities or purely stetic changes
-- [ ] Refactor menu bar rendering in src/application.[hpp/cpp]
+- [ ] Refactor menu bar rendering in src/application.[hpp/cpp]  
 - [ ] Implement stack view  
 - [ ] Implement fastforward  
-- [ ] Implement save/load states 
-- [ ] Add option to reset default layout
-- [ ] Add option layout save/load
-- [ ] Add controller configuration
-- [ ] Add option to unload rom
-- [ ] Add "recently loaded" roms menu
-- [ ] Add Rom folder caching 
+- [ ] Implement save/load states  
+- [ ] Add option to reset default layout  
+- [ ] Add option layout save/load  
+- [ ] Add controller configuration  
+- [ ] Add option to unload rom  
+- [ ] Add "Close" button in menu bar  
+- [ ] Add clock configuration  
+- [ ] Add "recently loaded" roms menu  
+- [ ] Add Rom folder caching  
 - [x] Fix game window drag  
 - [ ] Fix Display top not showing
 - [ ] Talk to Rebeca about the screen layout  
