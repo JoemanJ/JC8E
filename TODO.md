@@ -16,7 +16,7 @@
 - [ ] Implement stack view  
 - [ ] Implement fastforward  
 - [ ] Implement save/load states  
-- [ ] Fix game window drag  
+- [x] Fix game window drag  
 - [ ] Talk to Rebeca about the screen layout  
     - [ ] Draw references for each widgets  
 
