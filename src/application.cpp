@@ -141,21 +141,16 @@ void Application::createMenuBar(){
         fileBrowser.ClearSelected();
     }
 
-    // // View menu
-    // if(ig::BeginMenu("View")){
-
-    // ig::EndMenu();
-    // }
+    // View menu
+    if(ig::BeginMenu("View")){
+        ig::MenuItem("Display", NULL, &config.runtime.rendering.showDisplay);
+        ig::MenuItem("Registers", NULL, &config.runtime.rendering.showRegisters);
+        ig::MenuItem("Execution controls", NULL, &config.runtime.rendering.showExecutionControls);
+        ig::MenuItem("Memory editor", NULL, &config.runtime.rendering.showMemory);
+    ig::EndMenu();
+    }
 
     ig::EndMainMenuBar();
-}
-
-static void createFileMenu(){
-    
-}
-
-static void OpenLoadRomWindow(){
-    
 }
 
 void Application::createMainDockSpace(){

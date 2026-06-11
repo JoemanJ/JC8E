@@ -8,8 +8,8 @@
   - [x] Add "Open ROM option"  
     - [x] Import file browser  
     - [x] Implement file browser window  
-  - [ ] Add "View" menu  
-    - [ ] Add a ckeckbox for each widget 
+  - [x] Add "View" menu  
+    - [x] Add a ckeckbox for each widget 
 - [ ] Disable execution control when ROM is not loaded  
 - [ ] Fix lag  
 - [ ] "Fix" step not accounting for time  
