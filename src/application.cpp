@@ -7,6 +7,7 @@
 #include <imgui-SFML.h>
 #include <imgui_internal.h> // For building default dockspace layout
 #include <imgui_memory_editor.h>
+#include <imfilebrowser.h>
 
 using namespace std;
 namespace ig = ImGui;
@@ -107,6 +108,7 @@ void Application::handleEvents(){
 void Application::renderFrame(sf::Time dt){
     igsf::Update(window, dt);
 
+    createMenuBar();
     createMainDockSpace();
     renderDisplay();
     renderMemory();
@@ -115,6 +117,45 @@ void Application::renderFrame(sf::Time dt){
     
     igsf::Render();
     window.display();
+}
+
+void Application::createMenuBar(){
+    ig::BeginMainMenuBar();
+
+    // File menu
+    static ig::FileBrowser fileBrowser;
+    if(ig::BeginMenu("File")){
+        if(ig::MenuItem("Open ROM", "Ctrl+O")){
+            if(!config.runtime.state.loadROMBrowserAlreadyCreated){
+                fileBrowser.SetTitle("Select ROM file to load");
+                fileBrowser.SetTypeFilters({".ch8", ".bin", ".*"});
+            }
+    
+            fileBrowser.Open();
+        }
+        ig::EndMenu();
+    }
+    fileBrowser.Display();
+    if(fileBrowser.HasSelected()){
+        emulator->load(fileBrowser.GetSelected());
+        fileBrowser.ClearSelected();
+    }
+
+    // // View menu
+    // if(ig::BeginMenu("View")){
+
+    // ig::EndMenu();
+    // }
+
+    ig::EndMainMenuBar();
+}
+
+static void createFileMenu(){
+    
+}
+
+static void OpenLoadRomWindow(){
+    
 }
 
 void Application::createMainDockSpace(){

@@ -50,7 +50,7 @@ int main(int argc, char** argv)
     emulator.unpause();
 
     // Testing file browser
-    static ig::FileBrowser fileBrowser;
+    ig::FileBrowser fileBrowser;
     fileBrowser.SetTitle("Test");
     fileBrowser.SetTypeFilters({".ch8", ".bin", ".*"});
 

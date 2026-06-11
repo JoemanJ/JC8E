@@ -18,6 +18,7 @@ struct Config{
 
         struct{
             bool RAMEditorAlreadyCreated = false;
+            bool loadROMBrowserAlreadyCreated = false;
         } state;
     } runtime;
 };
@@ -83,6 +84,9 @@ class Application{
         // Renders a single UI frame, including game display and all DearImGui Widgets
         // We pass a time here because imgui-SFML needs the loop time to update the UI
         void renderFrame(sf::Time dt);
+
+        // Creates the main menu bar on top of the window, with options "File", "View", "Config", etc.
+        void createMenuBar();
 
         // Creates a Dear ImGui dockspace to house all windows
         void createMainDockSpace();

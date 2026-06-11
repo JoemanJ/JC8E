@@ -34,6 +34,7 @@ target_link_libraries(Application
         Emulation
         ImGui-SFML::ImGui-SFML
         imgui_hex_editor
+        imgui-filebrowser
 )
 
 ### External libraries ###

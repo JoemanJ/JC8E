@@ -1,14 +1,15 @@
 ### High priority - Urgent or essencial for project completion
+- [ ] Fix emulator rom loading 
 - [ ] Implement breakpoints  
 - [ ] Implement reset  
 
 ### Medium priority - Important for project functionality
-- [ ] Add menu bar  
-  - [ ] Add "Open ROM option"  
+- [x] Add menu bar  
+  - [x] Add "Open ROM option"  
     - [x] Import file browser  
-    - [ ] Implement file browser window  
+    - [x] Implement file browser window  
   - [ ] Add "View" menu  
-    - [ ] Add a ckeckbox for each widget  
+    - [ ] Add a ckeckbox for each widget 
 - [ ] Fix lag  
 - [ ] "Fix" step not accounting for time  
 
