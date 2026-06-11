@@ -22,6 +22,11 @@
     - [ ] Draw references for each widgets  
 
 ### Finishing tasks - To be done before handing the project in
+- [ ] Update README  
+  - [ ] Add installation and usage guide
+  - [ ] Add credits for external libraries  
+  - [ ] Add project overview
+  - [ ] Add screenshots
 - [ ] "Prettify" project code  
   - [ ] Remove commented code  
 - [ ] Review method documentation  
