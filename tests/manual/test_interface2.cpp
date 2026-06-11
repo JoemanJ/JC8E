@@ -12,6 +12,7 @@
 #include <optional>
 #include <imgui.h>
 #include <imgui-SFML.h>
+#include <imfilebrowser.h>
 
 using namespace std;
 namespace ig = ImGui;
@@ -47,6 +48,11 @@ int main(int argc, char** argv)
     // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/8-scrolling.ch8";
     emulator.load(romPath);
     emulator.unpause();
+
+    // Testing file browser
+    static ig::FileBrowser fileBrowser;
+    fileBrowser.SetTitle("Test");
+    fileBrowser.SetTypeFilters({".ch8", ".bin", ".*"});
 
     while(window.isOpen()) {
         sf::Time dt = loop_clock.restart();
@@ -88,6 +94,7 @@ int main(int argc, char** argv)
         // SFML pipeline
         window.clear(sf::Color::Black);
         window.pushGLStates();
+
         
         // Redraw the game screen only if something has changed
         // if(emulator.displayNeedsRedraw()){
@@ -96,6 +103,19 @@ int main(int argc, char** argv)
             ig::Begin("Game");
                 ig::Image(renderer.getScreenSprite());
             ig::End();
+
+            ig::Begin("Feature test");
+                if(ig::Button("Open file browser")){
+                    fileBrowser.Open();
+                }
+            ig::End();
+
+            fileBrowser.Display();
+
+            if(fileBrowser.HasSelected()){
+                cout << "File '" << fileBrowser.GetSelected() <<"' was selected" << endl;
+                fileBrowser.ClearSelected();
+            }
         // }
         
         window.popGLStates();

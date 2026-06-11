@@ -5,8 +5,7 @@
 ### Medium priority - Important for project functionality
 - [ ] Add menu bar  
   - [ ] Add "Open ROM option"  
-    - [ ] Import file browser  
-    - [ ] Configure file browser  
+    - [x] Import file browser  
     - [ ] Implement file browser window  
   - [ ] Add "View" menu  
     - [ ] Add a ckeckbox for each widget  

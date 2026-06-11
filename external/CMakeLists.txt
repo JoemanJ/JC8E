@@ -16,3 +16,4 @@ FetchContent_Declare(
 add_subdirectory(imgui-sfml)
 
 add_subdirectory(imgui_memory_editor)
+add_subdirectory(imgui-filebrowser)

@@ -124,6 +124,7 @@ target_link_libraries(test_interface2
         Chip8Core
         Emulation
         ImGui-SFML::ImGui-SFML
+        imgui-filebrowser
 )
 
 add_executable(test_interface3
