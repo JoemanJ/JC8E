@@ -252,7 +252,7 @@ void Application::renderExecutionControls(){
             ig::SameLine();
             if(ig::Button("Step")) emulator->stepInstructionTime();
             ig::SameLine();
-            // TODO: Implement Restart button
+            if(ig::Button("Restart")) emulator->reset();
         ig::EndDisabled();
         
     ig::End();

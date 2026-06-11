@@ -63,5 +63,5 @@ void Emulator::reset(){
     controller->reset();
     display->reset();
     ram->load(loadedRomPath);
-    cpu.reset();
+    cpu->reset();
 }
