@@ -41,4 +41,7 @@ class IController{
         The return value will be KEY_E
         */
         virtual KEYS getPressedKey() const = 0;
+
+        // Releases all keys
+        virtual void reset() = 0;
 };

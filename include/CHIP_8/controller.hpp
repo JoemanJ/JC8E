@@ -34,4 +34,7 @@ class Controller: public IController{
         The return value will be KEY_E
         */
         KEYS getPressedKey() const;
+
+        // Releases all keys
+        void reset() {keys.reset();}
 };

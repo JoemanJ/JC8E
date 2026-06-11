@@ -128,4 +128,17 @@ class CPU: public ICPU{
 
         void setFlag(); // Sets flag register (VF) to 1
         void resetFlag(); // Sets flag register (VF) to 0
+
+        /* 
+        Resets CPU to initial state and writes default font to RAM, starting from
+        address 0x50.
+        
+        Initial state:
+        - All general purpose registers (R0 to RF) = 0
+        - Index register (I) = 0
+        - Program Counter register (PC) = 0x200
+        - Sound timer register = 0
+        - Delay timer register = 0
+        */
+        void reset();
 };

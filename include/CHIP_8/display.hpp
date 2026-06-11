@@ -39,18 +39,21 @@ class Display : public IDisplay{
         If the pixel on position (index%SCREEN_WIDTH, index//SCREEN_WIDTH) is on:
         turn it off. Otherwise, turn it on.
         */
-       void togglePixel(uint16_t index){
-            pixel_t& p = buffer.at(index);
-            p = ~p;
-            updated = true;
-       }
+        void togglePixel(uint16_t index){
+                pixel_t& p = buffer.at(index);
+                p = ~p;
+                updated = true;
+        }
 
-       // Turns every píxel of the display black
-       void clear();
+        // Turns every píxel of the display black
+        void clear();
 
-       // Returns a vector with all pixels on the screen
-       const std::vector<pixel_t>& getPixels() const {return buffer;} 
+        // Returns a vector with all pixels on the screen
+        const std::vector<pixel_t>& getPixels() const {return buffer;} 
 
-       bool getUpdatedFlag() const override {return updated;}
-       void resetUpdatedFlag() override {updated = false;}
+        bool getUpdatedFlag() const override {return updated;}
+        void resetUpdatedFlag() override {updated = false;}
+
+        // Clears display and buffer
+        void reset();
 };

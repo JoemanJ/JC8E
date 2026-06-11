@@ -1,7 +1,7 @@
 ### High priority - Urgent or essencial for project completion
-- [ ] Fix emulator rom loading 
+- [x] Fix emulator rom loading 
 - [ ] Implement breakpoints  
-- [ ] Implement reset  
+- [x] Implement reset  
 
 ### Medium priority - Important for project functionality
 - [x] Add menu bar  
@@ -10,14 +10,22 @@
     - [x] Implement file browser window  
   - [ ] Add "View" menu  
     - [ ] Add a ckeckbox for each widget 
+- [ ] Disable execution control when ROM is not loaded  
 - [ ] Fix lag  
 - [ ] "Fix" step not accounting for time  
 
 ### Low priority - Extra functionalities or purely stetic changes
 - [ ] Implement stack view  
 - [ ] Implement fastforward  
-- [ ] Implement save/load states  
+- [ ] Implement save/load states 
+- [ ] Add option to reset default layout
+- [ ] Add option layout save/load
+- [ ] Add controller configuration
+- [ ] Add option to unload rom
+- [ ] Add "recently loaded" roms menu
+- [ ] Add Rom folder caching 
 - [x] Fix game window drag  
+- [ ] Fix Display top not showing
 - [ ] Talk to Rebeca about the screen layout  
     - [ ] Draw references for each widgets  
 

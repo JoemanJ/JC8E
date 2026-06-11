@@ -1,9 +1,10 @@
 #pragma once
 #include <commons.hpp>
+#include <stack>
 
 class ICPU{
     public:
-    virtual ~ICPU() = default;
+        virtual ~ICPU() = default;
         virtual void step() = 0;
         virtual void decTimers() = 0;
         
@@ -24,4 +25,17 @@ class ICPU{
 
         // Returns a reference to the Sound Timer register
         virtual byte_t& getSoundTimer() = 0;
+
+        /* 
+        Resets CPU to initial state and writes default font to RAM, starting from
+        address 0x50.
+        
+        Initial state:
+        - All general purpose registers (R0 to RF) = 0
+        - Index register (I) = 0
+        - Program Counter register (PC) = 0x200
+        - Sound timer register = 0
+        - Delay timer register = 0
+        */
+        virtual void reset() = 0;
 };

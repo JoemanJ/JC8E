@@ -21,6 +21,8 @@ void RAM::load(const filesystem::path& path){
     if(romFile.is_open()){
         streamsize size = romFile.tellg();
 
+        if (size > RAM_SIZE) throw invalid_argument("Error loading ROM: " + path.string() + "\nCause: Invalid ROM. File is too big.");
+
         romFile.seekg(0, ios::beg);
 
         vector<char> buffer(size);
@@ -28,6 +30,6 @@ void RAM::load(const filesystem::path& path){
         if(romFile.read(buffer.data(), size)){
             bulkWrite(0x200, size, (byte_t*)buffer.data());
             romFile.close();
-        }
-    }
+        } else throw invalid_argument("Error loading ROM: " + path.string() + "\nCause: Couldn't read file.");
+    } else throw invalid_argument("Error loading ROM: " + path.string() + "\nCause: Couldn't open file.");
 }

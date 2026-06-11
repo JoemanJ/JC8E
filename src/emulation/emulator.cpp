@@ -47,10 +47,21 @@ void Emulator::releaseKey(const byte_t k){
 }
 
 void Emulator::load(const std::filesystem::path &path){
+    controller->reset();
+    display->reset();
     ram->load(path);
+    cpu->reset();
+    loadedRomPath = path;
     unpause();
 }
 
 byte_t* Emulator::getRAMBytes(){
     return ram->getRawMemory();
+}
+
+void Emulator::reset(){
+    controller->reset();
+    display->reset();
+    ram->load(loadedRomPath);
+    cpu.reset();
 }

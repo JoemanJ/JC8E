@@ -87,11 +87,16 @@ class Emulator {
         // Returns a pointer to the CPU's Sound Timer register
         byte_t* getCPUSoundTimer(){return &cpu->getSoundTimer();}
 
+        // Resets the currently loaded rom
+        void reset();
+
     private:
         sptr<IRAM> ram;
         sptr<IDisplay> display;
         sptr<IController> controller;
         uptr<ICPU> cpu;
+
+        std::filesystem::path loadedRomPath = "";
         
         bool paused;
 

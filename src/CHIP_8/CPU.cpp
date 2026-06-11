@@ -10,13 +10,7 @@ display(display),
 controller(controller),
 USE_LEGACY_BEHAVIOR(USE_LEGACY_BEHAVIOR)
 {
-    // Copy font to memory
-    memory->bulkWrite(0x50, sizeof(FONT), FONT);
-    
-    // Initialize registers
-    regs = std::array<byte_t, 16>();
-    PC = 0x200;
-    I = 0x0;
+    reset();
 
     // Initialize random number generator
     RNG = mt19937(random_device()());
@@ -362,4 +356,16 @@ void CPU::decode_execute(instruction_t instruction){
     // We only ever care about the lower 12 bits of these registers
     I &= 0x0FFF;
     PC &= 0x0FFF;
+}
+
+void CPU::reset(){
+    // Copy font to memory
+    memory->bulkWrite(0x50, sizeof(FONT), FONT);
+    
+    // Initialize registers
+    regs = std::array<byte_t, 16>();
+    PC = 0x200;
+    I = 0x0;
+    delayTimer = 0;
+    soundTimer = 0;
 }

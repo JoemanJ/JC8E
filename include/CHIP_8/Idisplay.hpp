@@ -13,4 +13,5 @@ class IDisplay{
         virtual const std::vector<pixel_t>& getPixels() const = 0;
         virtual bool getUpdatedFlag() const = 0; 
         virtual void resetUpdatedFlag() = 0;
+        virtual void reset() = 0; // clears display and buffer
 };
