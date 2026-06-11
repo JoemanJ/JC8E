@@ -10,9 +10,9 @@
     - [x] Implement file browser window  
   - [x] Add "View" menu  
     - [x] Add a ckeckbox for each widget 
-- [ ] Disable execution control when ROM is not loaded  
+- [x] Disable execution control when ROM is not loaded  
 - [ ] Fix lag  
-- [ ] "Fix" step not accounting for time  
+- [x] "Fix" step not accounting for time  
 
 ### Low priority - Extra functionalities or purely stetic changes
 - [ ] Refactor menu bar rendering in src/application.[hpp/cpp]  

@@ -17,6 +17,7 @@ struct Config{
         } rendering;
 
         struct{
+            bool romIsLoaded = false;
             bool RAMEditorAlreadyCreated = false;
             bool loadROMBrowserAlreadyCreated = false;
         } state;

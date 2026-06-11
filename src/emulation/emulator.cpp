@@ -17,9 +17,9 @@ Emulator::Emulator(
       
 }
 
-void Emulator::processTime(const sf::Time &dt)
+void Emulator::processTime(const sf::Time &dt, bool ignorePaused)
 {
-    if(paused) return;
+    if(!ignorePaused && paused) return;
 
     instructionTimeAccumulator += dt;
     timerTimeAccumulator += dt;

@@ -44,25 +44,12 @@ void Application::initEmulator(){
 }
 
 void Application::initWindow(){
-    // window.create(sf::VideoMode(640, 320), "JC8E");
     window.create(sf::VideoMode::getDesktopMode(), "JC8E", sf::Style::Default);
     if (!igsf::Init(window)) return;
     ig::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 }
 
 void Application::run(){
-    //TODO: Implement a real way to load a rom...
-    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/1-chip8-logo.ch8";
-    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/2-ibm-logo.ch8";
-    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/3-corax+.ch8";
-    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/4-flags.ch8";
-    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/5-quirks.ch8";
-    std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/6-keypad.ch8";
-    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/7-beep.ch8";
-    // std::filesystem::path romPath = "/home/ddbrandao/Desktop/Estudos/JC8E/tests/ROMS/8-scrolling.ch8";
-    emulator->load(romPath);
-    emulator->unpause();
-
     while(window.isOpen() && !CLOSING){
         mainLoop();
     }
@@ -137,8 +124,12 @@ void Application::createMenuBar(){
     }
     fileBrowser.Display();
     if(fileBrowser.HasSelected()){
+        // TODO: Change this to a try-catch with an error message modal
+        // TODO: Change this to a method that also adds the rom to the recent roms list
         emulator->load(fileBrowser.GetSelected());
+        config.runtime.state.romIsLoaded = true;
         fileBrowser.ClearSelected();
+
     }
 
     // View menu
@@ -251,16 +242,19 @@ void Application::renderRegisters(){
 
 void Application::renderExecutionControls(){
     if(!config.runtime.rendering.showExecutionControls) return;
+    bool romIsLoaded = config.runtime.state.romIsLoaded;
     
     ig::Begin("Execution Controls", &config.runtime.rendering.showExecutionControls);
-        if(ig::Button("Play")) emulator->unpause();
-        ig::SameLine();
-        if(ig::Button("Pause")) emulator->pause();
-        ig::SameLine();
-        // TODO: Change this to dinamically account for the emulator's execution time
-        if(ig::Button("Step")) emulator->step();
-        ig::SameLine();
-        // TODO: Implement Restart button
+        ig::BeginDisabled(!romIsLoaded);
+            if(ig::Button("Play")) emulator->unpause();
+            ig::SameLine();
+            if(ig::Button("Pause")) emulator->pause();
+            ig::SameLine();
+            if(ig::Button("Step")) emulator->stepInstructionTime();
+            ig::SameLine();
+            // TODO: Implement Restart button
+        ig::EndDisabled();
+        
     ig::End();
 }
 

@@ -31,8 +31,15 @@ class Emulator {
         This function should be called in the main loop.
         This will run CPU instructions and decrement CPU timers according to
         elapsed time since the last iteration.
+        
+        If ignorePaused is false (default) this function will not process the
+        elapsed time if the emulator is paused, effectively freezing the 
+        emulator time
+        If ignorePaused is true, this function will account for the given time
+        even if the emulator is paused, which is useful if you want to execute
+        one instruction or timer decrease at a time for debugging purposes.
         */
-        void processTime(const sf::Time& dt);
+        void processTime(const sf::Time& dt, bool ignorePaused = false);
 
         /*
         Returns an array of 64*32 bytes representing each pixel on the display.
@@ -46,9 +53,11 @@ class Emulator {
         // Resumes emulation
         void unpause() {paused = false;}
 
-        // Executes exactly one processor step
-        // FIXME(?) This doesn't decrease the CPU timers
+        // Executes exactly one CPU instruction (does not affect timers)
         void step() {cpu->step();}
+
+        // Process the exact time of a CPU instruction execution (decreases CPU timers accordingly)
+        void stepInstructionTime(){processTime(CPUInstructionTime, true);}
 
         // Presses a controller key. k must be a byte from 0x0 to 0xF
         void pressKey(const byte_t k);

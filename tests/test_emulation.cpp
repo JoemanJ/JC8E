@@ -65,7 +65,13 @@ TEST_F(EmulatorTest, CPUStepMethodIsNotCalledWhenPaused){
     emulator.processTime(T500Hz*10.0f);
 }
 
-TEST_F(EmulatorTest, CPUDecTimersMethodIsCalledWhenOperationTimePasses){
+TEST_F(EmulatorTest, CPUStepMethodIsCalledWhenPausedButIgnorePausedArgumentIsTrue){
+    emulator.pause();
+    EXPECT_CALL(*cpu, step()).Times(1);
+    emulator.processTime(T500Hz, true);
+}
+
+TEST_F(EmulatorTest, CPUDecTimersMethodIsCalledWhenCPUTimerTimePasses){
     emulator.unpause();
     EXPECT_CALL(*cpu, decTimers());
     emulator.processTime(T60Hz);
@@ -74,7 +80,7 @@ TEST_F(EmulatorTest, CPUDecTimersMethodIsCalledWhenOperationTimePasses){
     emulator.processTime(T60Hz*10.0f);
 }
 
-TEST_F(EmulatorTest, CPUDecTimersMethodIsNotCalledIfOperationTimeHasntPassed){
+TEST_F(EmulatorTest, CPUDecTimersMethodIsNotCalledIfCPUTimerTimeHasntPassed){
     emulator.unpause();
     EXPECT_CALL(*cpu, decTimers()).Times(0);
     emulator.processTime(T60Hz*0.99f);
@@ -85,6 +91,12 @@ TEST_F(EmulatorTest, CPUDecTimersMethodIsNotCalledWhenPaused){
     EXPECT_CALL(*cpu, decTimers()).Times(0);
     emulator.processTime(T60Hz);
     emulator.processTime(T60Hz*10.0f);
+}
+
+TEST_F(EmulatorTest, CPUDecTimersMethodIsCalledWhenPausedButIgnorePausedArgumentIsTrue){
+    emulator.pause();
+    EXPECT_CALL(*cpu, decTimers()).Times(1);
+    emulator.processTime(T60Hz, true);
 }
 
 TEST_F(EmulatorTest, CPUDoesntCountTimeWhilePaused){
