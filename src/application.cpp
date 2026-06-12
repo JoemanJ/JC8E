@@ -226,12 +226,26 @@ void Application::renderRegisters(){
     
     static byte_t* regs = emulator->getCPURegs();
     ig::Begin("Registers", &config.runtime.rendering.showRegisters);
-        ig::Text("Registers:");
-        ig::Text("%02X %02X %02X %02X\n%02X %02X %02X %02X\n%02X %02X %02X %02X\n%02X %02X %02X %02X\n\n",
-        regs[0], regs[1], regs[2], regs[3], 
-        regs[4], regs[5], regs[6], regs[7], 
-        regs[8], regs[9], regs[10], regs[11],
-        regs[12], regs[13], regs[14], regs[15]);
+        ig::SeparatorText("General Purpose Registers:");
+        uint8_t registerIndex = 0; // Counting from 0 to F
+        if(ig::BeginTable("General Purpose Registers", 4)){
+            for(uint8_t row=0; row<4; row++){
+                ig::TableNextRow();
+                for(uint8_t col=0; col<4; col++){
+                    // FIXME?: Maybe there's a better way to do this...
+                    // Generating labels "R0" to "RF"
+                    char regName[5] = "##RX";
+                    sprintf(&regName[3], "%01X", registerIndex);
+
+                    ig::TableSetColumnIndex(col);
+                    ig::Text("R%01X", registerIndex);
+                    ig::InputScalar(regName, ImGuiDataType_U8, 
+                        &regs[registerIndex], NULL, NULL, "%02X");
+                    registerIndex++;
+                }
+            }
+            ig::EndTable();
+        }
 
         ig::Text("PC: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUPC());
         ig::Text("I: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUI());
