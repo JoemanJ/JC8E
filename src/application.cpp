@@ -228,6 +228,7 @@ void Application::renderRegisters(){
     ig::Begin("Registers", &config.runtime.rendering.showRegisters);
         ig::SeparatorText("General Purpose Registers:");
         uint8_t registerIndex = 0; // Counting from 0 to F
+
         if(ig::BeginTable("General Purpose Registers", 4)){
             for(uint8_t row=0; row<4; row++){
                 ig::TableNextRow();
@@ -247,10 +248,24 @@ void Application::renderRegisters(){
             ig::EndTable();
         }
 
-        ig::Text("PC: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUPC());
-        ig::Text("I: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUI());
-        ig::Text("Delay Timer: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUDelayTimer());
-        ig::Text("Sound Timer: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUSoundTimer());
+        ig::SeparatorText("Special Registers:");
+        if(ig::BeginTable("Special Registers", 2)){
+            ig::TableNextColumn();
+            ig::Text("PC"); ig::SameLine(); ig::InputScalar("##PC", ImGuiDataType_U16, emulator->getCPUPC(), NULL, NULL, "%04X");
+            ig::TableNextColumn();
+            ig::Text("I"); ig::SameLine(); ig::InputScalar("##I", ImGuiDataType_U16, emulator->getCPUI(), NULL, NULL, "%04X");
+            ig::TableNextRow();
+            ig::TableNextColumn();
+            ig::Text("Delay Timer"); ig::SameLine(); ig::InputScalar("##Delay Timer", ImGuiDataType_U8, emulator->getCPUDelayTimer(), NULL, NULL, "%02X");
+            ig::TableNextColumn();
+            ig::Text("Sound Timer"); ig::SameLine(); ig::InputScalar("##Sound Timer", ImGuiDataType_U8, emulator->getCPUSoundTimer(), NULL, NULL, "%02X");
+
+            // ig::Text("PC: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUPC());
+            // ig::Text("I: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUI());
+            // ig::Text("Delay Timer: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUDelayTimer());
+            // ig::Text("Sound Timer: "); ig::SameLine(); ig::Text("%d", *emulator->getCPUSoundTimer());
+            ig::EndTable();
+        }
     ig::End();
 }
 

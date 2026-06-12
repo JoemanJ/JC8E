@@ -1,8 +1,8 @@
 ### High priority - Urgent or essencial for project completion
 - [x] Fix emulator rom loading 
-- [ ] Make reristers editable
+- [x] Make reristers editable
   - [x] General purpose registers  
-  - [ ] Special registers  
+  - [x] Special registers  
 - [ ] Implement breakpoints  
 - [x] Implement reset  
 - [x] Add button to reset rom
