@@ -4,7 +4,10 @@
 #include "CHIP_8/RAM.hpp"
 #include "CHIP_8/display.hpp"
 #include "CHIP_8/controller.hpp"
-#include "timing/timing.hpp"
+#include <SFML/System.hpp>
+
+inline sf::Time T60Hz = sf::seconds(1)/60.0f; // Clock period for timers
+inline sf::Time T500Hz = sf::seconds(1)/500.0f; // Clock period for instructions
 
 /*
     Class that encapsulates the emulator core and execution logic.

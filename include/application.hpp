@@ -1,3 +1,5 @@
+#pragma once
+
 #include <emulation/emulator.hpp>
 #include <emulation/inputMapper.hpp>
 #include <SFML/Graphics.hpp>

@@ -1,5 +1,4 @@
 #include "emulation/emulator.hpp"
-#include "timing/timing.hpp"
 
 using namespace std;
 

@@ -3,6 +3,7 @@ project(JC8E LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(BUILD_SHARED_LIBS FALSE)
 
 ### My libraries ###
 add_library(Chip8Core
@@ -146,8 +147,8 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    Chip8Core
-    Emulation
-    ImGui-SFML::ImGui-SFML
+    # Chip8Core
+    # Emulation
+    # ImGui-SFML::ImGui-SFML
     Application
 )
