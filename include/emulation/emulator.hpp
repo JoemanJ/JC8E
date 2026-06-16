@@ -102,6 +102,9 @@ class Emulator {
         // Returns the CPU's clock period for instructions
         sf::Time getCPUInstructionTime() const {return CPUInstructionTime;}
 
+        // Returns whether the emulation is paused or not
+        bool isPaused() const {return paused;}
+
         // Resets the currently loaded rom
         void reset();
 
