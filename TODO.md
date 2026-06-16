@@ -16,6 +16,7 @@
     - [x] Add a ckeckbox for each widget 
 - [x] Disable execution control when ROM is not loaded  
 - [ ] Fix lag  
+- [ ] Limit register editing to only when emulator is paused
 - [x] "Fix" step not accounting for time  
 
 ### Low priority - Extra functionalities or purely stetic changes
