@@ -45,6 +45,7 @@ void Application::initEmulator(){
 
 void Application::initWindow(){
     window.create(sf::VideoMode::getDesktopMode(), "JC8E", sf::Style::Default);
+    window.setFramerateLimit(30); // CHIP8 will never go this high anyway
     if (!igsf::Init(window)) return;
     ig::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 }
@@ -56,7 +57,9 @@ void Application::run(){
 }
 
 void Application::mainLoop(){
-    static sf::Time dt = loopClock.restart();
+    static sf::Time dt;
+    dt = loopClock.restart();
+    sf::sleep(emulator->getCPUInstructionTime()-dt);
 
     handleEvents();
     if (CLOSING) return;

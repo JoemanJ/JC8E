@@ -99,6 +99,9 @@ class Emulator {
         // Returns a pointer to the CPU's Sound Timer register
         byte_t* getCPUSoundTimer(){return &cpu->getSoundTimer();}
 
+        // Returns the CPU's clock period for instructions
+        sf::Time getCPUInstructionTime() const {return CPUInstructionTime;}
+
         // Resets the currently loaded rom
         void reset();
 
