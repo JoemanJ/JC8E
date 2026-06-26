@@ -57,7 +57,8 @@ class Emulator {
         void unpause() {paused = false;}
 
         // Executes exactly one CPU instruction (does not affect timers)
-        void step() {cpu->step();}
+        // Will pause execution if PC points to a breakpoint afterwards
+        void step();
 
         // Process the exact time of a CPU instruction execution (decreases CPU timers accordingly)
         void stepInstructionTime(){processTime(CPUInstructionTime, true);}
@@ -105,6 +106,21 @@ class Emulator {
         // Returns whether the emulation is paused or not
         bool isPaused() const {return paused;}
 
+        // Returns an iterator pointing to the begining of the breakpoints list
+        std::vector<addr_t>::iterator getBreakpoints() {return breakpoints.begin();}
+
+        // Returns an iterator pointing to the end of the breakpoints list (for iterating)
+        uint16_t getBreakpointCount() {return breakpoints.size();}
+
+        // Adds a new breakpoint to the list
+        void addBreakpoint(addr_t address){breakpoints.push_back(address);}
+
+        // Removes breakpoint pointed to by given iterator
+        void removeBreakpoint(std::vector<addr_t>::iterator it){breakpoints.erase(it);}
+
+        // Removes breakpoint at given index
+        void removeBreakpoint(uint8_t index){breakpoints.erase(breakpoints.begin()+index);}
+
         // Resets the currently loaded rom
         void reset();
 
@@ -123,4 +139,9 @@ class Emulator {
         
         sf::Time instructionTimeAccumulator;
         sf::Time timerTimeAccumulator;
+    
+       std::vector<addr_t> breakpoints;
+
+       // Returns true if there is a breakpoint at the given address
+       bool isBreakpoint(addr_t address) const;
     };

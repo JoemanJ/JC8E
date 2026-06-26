@@ -11,11 +11,23 @@ Emulator::Emulator(
     sf::Time CPUTimerTime
 ): 
     cpu(std::move(cpu)), ram(ram), display(display), controller(controller),
-    CPUInstructionTime(CPUInstructionTime), CPUTimerTime(CPUTimerTime), paused(true)
+    CPUInstructionTime(CPUInstructionTime), CPUTimerTime(CPUTimerTime), paused(true),
+    breakpoints()
 {
       
 }
 
+void Emulator::step(){
+    cpu->step();
+}
+
+inline bool Emulator::isBreakpoint(addr_t address) const{
+    for(auto it = breakpoints.begin(); it!=breakpoints.end(); it++){
+        if (*it == address) return true;
+    }
+
+    return false;
+}
 void Emulator::processTime(const sf::Time &dt, bool ignorePaused)
 {
     if(!ignorePaused && paused) return;
@@ -26,6 +38,10 @@ void Emulator::processTime(const sf::Time &dt, bool ignorePaused)
     while(instructionTimeAccumulator >= CPUInstructionTime){
         cpu->step();
         instructionTimeAccumulator -= CPUInstructionTime;
+        if(isBreakpoint(cpu->getPC())){
+            pause();
+            return;
+        };
     }
 
     while(timerTimeAccumulator >= CPUTimerTime){

@@ -163,7 +163,7 @@ void Application::createMainDockSpace(){
         ImGuiID main = ig::DockBuilderAddNode(background);
         ImGuiID bottom = ig::DockBuilderSplitNode(main, ImGuiDir_Down, 2.0/9.0, nullptr, &main);
         ImGuiID right = ig::DockBuilderSplitNode(main, ImGuiDir_Right, 0.21, nullptr, &main);
-        ImGuiID right_bottom = ig::DockBuilderSplitNode(right, ImGuiDir_Down, 0.2f, nullptr, &right);
+        ImGuiID right_bottom = ig::DockBuilderSplitNode(right, ImGuiDir_Down, 0.4f, nullptr, &right);
 
         // Set which window will be displayed in each area
         ig::DockBuilderDockWindow("Display", main);
@@ -287,6 +287,30 @@ void Application::renderExecutionControls(){
             if(ig::Button("Restart")) emulator->reset();
         ig::EndDisabled();
         
+        ig::SeparatorText("Breakpoints");
+
+        // New breakpoint form
+        static addr_t newBreakpointAddress = 0;
+        ig::Text("0x"); ig::SameLine();
+        ig::InputScalar(
+            "##newBreakpoint", ImGuiDataType_U16, &newBreakpointAddress,
+            NULL, NULL, "%04X", ImGuiInputTextFlags_CharsHexadecimal);
+        ig::SameLine();
+        if(ig::Button("ADD##Breakpoint")){
+            emulator->addBreakpoint(newBreakpointAddress);
+            newBreakpointAddress = 0;
+        }
+
+        // Breakpoints list
+        if(ig::BeginListBox("##BreakpointList")){
+            auto it = emulator->getBreakpoints();
+            for(uint16_t i = 0; i<emulator->getBreakpointCount(); it++, i++){
+                ig::Text("%04X", *it);
+                ig::SameLine();
+                if(ig::Button("delete")) emulator->removeBreakpoint(it);
+            }
+            ig::EndListBox();
+        }
     ig::End();
 }
 

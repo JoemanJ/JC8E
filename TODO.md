@@ -3,7 +3,7 @@
 - [x] Make reristers editable
   - [x] General purpose registers  
   - [x] Special registers  
-- [ ] Implement breakpoints  
+- [x] Implement breakpoints  
 - [x] Implement reset  
 - [x] Add button to reset rom
 
@@ -21,6 +21,7 @@
 
 ### Low priority - Extra functionalities or purely stetic changes
 - [ ] Refactor menu bar rendering in src/application.[hpp/cpp]  
+- [ ] Fix top screen cut because of menu bar
 - [ ] Implement stack view  
 - [ ] Implement fastforward  
 - [ ] Implement save/load states  
